@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useReducer } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { companies, timeSlots, bookings as initialBookings, type Booking } from '@/lib/data';
+import { companies, timeSlots, bookings } from '@/lib/data';
 import { CheckCircle, Users, ArrowRight, Ticket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function StudentDashboard() {
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   const { toast } = useToast();
   const router = useRouter();
   const studentId = 'student-1'; // Mock current student
@@ -29,8 +29,9 @@ export default function StudentDashboard() {
       return;
     }
 
-    const newBooking = { studentId, companyId, timeSlotId };
-    setBookings(prev => [...prev, newBooking]);
+    bookings.push({ studentId, companyId, timeSlotId });
+    forceUpdate();
+
     toast({
       title: 'Prenotazione Confermata!',
       description: `Hai prenotato con successo con ${companies.find(c => c.id === companyId)?.name}.`,

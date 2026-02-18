@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/firebase";
-import { LogOut } from "lucide-react";
+import { LogOut, CalendarCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 
@@ -54,6 +54,15 @@ export function UserNav({ name, email, role }: UserNavProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {role === 'Student' && (
+          <>
+            <DropdownMenuItem onClick={() => router.push('/student/my-bookings')}>
+              <CalendarCheck className="mr-2 h-4 w-4" />
+              <span>Le mie attività</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Esci</span>

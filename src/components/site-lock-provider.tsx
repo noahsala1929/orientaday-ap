@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 import { ShieldCheck, ShieldOff } from 'lucide-react';
 
-const ADMIN_PIN = '72943816'; // Per maggiore sicurezza, questo dovrebbe essere in una variabile d'ambiente
+// For better security, this should be an environment variable
+const ADMIN_PIN = '72943816'; 
 
 export function SiteLockProvider({ children }: { children: ReactNode }) {
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -16,13 +17,21 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    const validHostnames = ['orientaday.orientaedu.it', 'localhost'];
+    // This check ensures the lock only runs on the intended domain.
+    if (typeof window !== 'undefined' && !validHostnames.includes(window.location.hostname)) {
+      setIsUnlocked(true);
+      setIsClient(true);
+      return;
+    }
+
     setIsClient(true);
     try {
       if (sessionStorage.getItem('orientaday-admin-unlocked') === 'true') {
         setIsUnlocked(true);
       }
     } catch (e) {
-      console.error("Impossibile accedere a sessionStorage.", e);
+      console.error("Could not access sessionStorage.", e);
     }
   }, []);
 
@@ -33,19 +42,19 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
         setIsUnlocked(true);
         setError('');
       } catch (e) {
-        console.error("Impossibile accedere a sessionStorage.", e);
-        // Se sessionStorage non è disponibile, sblocca solo per questa sessione.
+        console.error("Could not access sessionStorage.", e);
+        // If sessionStorage is not available, unlock for this session only.
         setIsUnlocked(true);
       }
     } else {
-      setError('Codice non valido. Riprova.');
+      setError('Invalid code. Please try again.');
       setPin('');
     }
   };
   
   if (!isClient) {
-    // Evita il mismatch di idratazione non renderizzando nulla di diverso sul server.
-    // Qui si potrebbe inserire uno spinner di caricamento.
+    // Avoids hydration mismatch by not rendering anything different on the server.
+    // A loading spinner could be placed here.
     return null;
   }
 
@@ -60,20 +69,20 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
           <div className="mx-auto mb-4">
             <Logo />
           </div>
-          <CardTitle className="font-headline text-2xl">Lavori in Corso</CardTitle>
+          <CardTitle className="font-headline text-2xl">Work in Progress</CardTitle>
           <CardDescription>
-            Il sito di OrientaDay è quasi pronto e sarà presto disponibile al pubblico.
+            The OrientaDay site is almost ready and will be available to the public soon.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <p className="text-center text-sm text-muted-foreground">
-              Se sei un amministratore, inserisci il codice di accesso per visualizzare il sito.
+              If you are an administrator, enter the access code to view the site.
             </p>
             <div className="flex gap-2">
               <Input
                 type="password"
-                placeholder="Codice di accesso Admin"
+                placeholder="Admin access code"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 onKeyDown={(e) => {
@@ -84,7 +93,7 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
               />
               <Button onClick={handleUnlock}>
                 <ShieldCheck className="mr-2 h-4 w-4" />
-                Accedi
+                Access
               </Button>
             </div>
             {error && (

@@ -14,8 +14,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase';
 
 const formSchema = z.object({
-  email: z.string().email('Please enter a valid email address.'),
-  password: z.string().min(8, 'Password must be at least 8 characters.'),
+  email: z.string().email('Per favore inserisci un indirizzo email valido.'),
+  password: z.string().min(8, 'La password deve contenere almeno 8 caratteri.'),
 });
 
 export default function CompanyLoginPage() {
@@ -34,23 +34,23 @@ export default function CompanyLoginPage() {
     if (!auth) {
         toast({
             variant: "destructive",
-            title: "Authentication service not ready",
-            description: "Please try again in a moment.",
+            title: "Servizio di autenticazione non pronto",
+            description: "Riprova tra qualche istante.",
         });
         return;
     }
     try {
         await signInWithEmailAndPassword(auth, values.email, values.password);
         toast({
-            title: 'Login Successful',
-            description: 'Redirecting to the company portal...',
+            title: 'Accesso Riuscito',
+            description: 'Reindirizzamento al portale aziendale...',
         });
         router.push('/company/dashboard');
     } catch (error: any) {
         toast({
             variant: "destructive",
-            title: "Login Failed",
-            description: "Invalid email or password. Please try again.",
+            title: "Accesso Fallito",
+            description: "Email o password non validi. Riprova.",
         });
         console.error('Company Login Failed:', error);
     }
@@ -58,8 +58,8 @@ export default function CompanyLoginPage() {
 
   return (
     <AuthLayout
-      title="Company Portal"
-      description="Log in to manage check-ins and assess talent."
+      title="Portale Azienda"
+      description="Accedi per gestire i check-in e valutare i talenti."
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -70,7 +70,7 @@ export default function CompanyLoginPage() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="hr@company.com" {...field} />
+                  <Input type="email" placeholder="hr@azienda.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -90,7 +90,7 @@ export default function CompanyLoginPage() {
             )}
           />
           <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
+            {form.formState.isSubmitting ? 'Accesso in corso...' : 'Accedi'}
           </Button>
         </form>
       </Form>

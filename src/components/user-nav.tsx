@@ -56,7 +56,7 @@ export function UserNav({ name, email, role }: UserNavProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span>Esci</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

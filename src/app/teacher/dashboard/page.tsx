@@ -16,14 +16,15 @@ export default function TeacherDashboard() {
   const { toast } = useToast();
 
   const handleSetStatus = (studentId: string, status: 'present' | 'absent') => {
+    const studentName = students.find(s => s.id === studentId)?.name;
     setStudents(prevStudents =>
       prevStudents.map(student =>
         student.id === studentId ? { ...student, status } : student
       )
     );
     toast({
-      title: 'Attendance Updated',
-      description: `${students.find(s => s.id === studentId)?.name} marked as ${status}.`,
+      title: 'Presenza Aggiornata',
+      description: `${studentName} è stato segnato come ${status === 'present' ? 'presente' : 'assente'}.`,
     });
     if (status === 'absent') {
       // In a real app, this would trigger a server action to release bookings.
@@ -34,28 +35,28 @@ export default function TeacherDashboard() {
   const getStatusBadge = (status: Student['status']) => {
     switch (status) {
       case 'present':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"><UserCheck className="mr-1 h-3 w-3"/>Present</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"><UserCheck className="mr-1 h-3 w-3"/>Presente</Badge>;
       case 'absent':
-        return <Badge variant="destructive"><UserX className="mr-1 h-3 w-3"/>Absent</Badge>;
+        return <Badge variant="destructive"><UserX className="mr-1 h-3 w-3"/>Assente</Badge>;
       default:
-        return <Badge variant="outline">Pending</Badge>;
+        return <Badge variant="outline">In attesa</Badge>;
     }
   };
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold font-headline tracking-tight mb-2">Student Attendance</h1>
-      <p className="text-muted-foreground mb-8">Manage attendance for students from your school.</p>
+      <h1 className="text-3xl font-bold font-headline tracking-tight mb-2">Presenze Studenti</h1>
+      <p className="text-muted-foreground mb-8">Gestisci le presenze degli studenti della tua scuola.</p>
 
       <Card>
         <CardContent className="pt-6">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Student Name</TableHead>
+                <TableHead>Nome Studente</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>Stato</TableHead>
+                <TableHead className="text-right">Azioni</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -68,18 +69,18 @@ export default function TeacherDashboard() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
+                          <span className="sr-only">Apri menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleSetStatus(student.id, 'present')}>
                           <UserCheck className="mr-2 h-4 w-4" />
-                          Mark as Present
+                          Segna come Presente
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleSetStatus(student.id, 'absent')}>
                           <UserX className="mr-2 h-4 w-4" />
-                          Mark as Absent
+                          Segna come Assente
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

@@ -40,13 +40,13 @@ export default function TicketPage() {
         <Button asChild variant="ghost" className="mb-4">
             <Link href="/student/dashboard">
                 <ChevronLeft className="mr-2 h-4 w-4" />
-                Back to Dashboard
+                Torna alla Dashboard
             </Link>
         </Button>
       <Card className="max-w-lg mx-auto shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="font-headline text-3xl">Your OrientaDay Ticket</CardTitle>
-          <CardDescription>Present this QR code at company booths for check-in.</CardDescription>
+          <CardTitle className="font-headline text-3xl">Il Tuo Biglietto OrientaDay</CardTitle>
+          <CardDescription>Presenta questo codice QR agli stand delle aziende per il check-in.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center space-y-6">
@@ -60,7 +60,7 @@ export default function TicketPage() {
             <Separator />
             
             <div className="w-full text-left">
-              <h3 className="font-semibold mb-2">Your Booked Sessions:</h3>
+              <h3 className="font-semibold mb-2">Le Tue Sessioni Prenotate:</h3>
               <ul className="space-y-3">
                 {bookings.map((booking, index) => (
                   <li key={index} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
@@ -79,8 +79,8 @@ export default function TicketPage() {
         </CardContent>
       </Card>
       <div className="flex justify-center gap-4 mt-6">
-        <Button variant="outline"><Printer className="mr-2 h-4 w-4" /> Print Ticket</Button>
-        <Button><Download className="mr-2 h-4 w-4" /> Download</Button>
+        <Button variant="outline"><Printer className="mr-2 h-4 w-4" /> Stampa Biglietto</Button>
+        <Button><Download className="mr-2 h-4 w-4" /> Scarica</Button>
       </div>
     </div>
   );

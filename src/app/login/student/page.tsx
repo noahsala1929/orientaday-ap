@@ -16,8 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase';
 
 const formSchema = z.object({
-  schoolId: z.string().min(1, 'Please select your school.'),
-  pin: z.string().length(4, 'PIN must be 4 digits.'),
+  schoolId: z.string().min(1, 'Per favore seleziona la tua scuola.'),
+  pin: z.string().length(4, 'Il PIN deve essere di 4 cifre.'),
 });
 
 export default function StudentLoginPage() {
@@ -36,7 +36,7 @@ export default function StudentLoginPage() {
     if (!auth) {
         toast({
             variant: "destructive",
-            title: "Authentication service not ready",
+            title: "Servizio di autenticazione non pronto",
         });
         return;
     }
@@ -46,16 +46,16 @@ export default function StudentLoginPage() {
         await signInAnonymously(auth);
 
         toast({
-          title: 'Login Successful',
-          description: 'Redirecting to your dashboard...',
+          title: 'Accesso Riuscito',
+          description: 'Reindirizzamento alla tua dashboard...',
         });
         // Simulate successful login and redirect
         router.push('/student/dashboard');
     } catch (error: any) {
         toast({
             variant: "destructive",
-            title: "Login Failed",
-            description: "Could not log you in. Please try again.",
+            title: "Accesso Fallito",
+            description: "Impossibile effettuare l'accesso. Riprova.",
         });
         console.error("Student Login Failed:", error);
     }
@@ -63,8 +63,8 @@ export default function StudentLoginPage() {
 
   return (
     <AuthLayout
-      title="Student Access"
-      description="Select your school and enter your PIN to continue."
+      title="Accesso Studente"
+      description="Seleziona la tua scuola e inserisci il PIN per continuare."
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -73,11 +73,11 @@ export default function StudentLoginPage() {
             name="schoolId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>School</FormLabel>
+                <FormLabel>Scuola</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your school" />
+                      <SelectValue placeholder="Seleziona la tua scuola" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -97,7 +97,7 @@ export default function StudentLoginPage() {
             name="pin"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Student PIN</FormLabel>
+                <FormLabel>PIN Studente</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="****" {...field} />
                 </FormControl>
@@ -106,7 +106,7 @@ export default function StudentLoginPage() {
             )}
           />
           <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? 'Accessing...' : 'Access Dashboard'}
+            {form.formState.isSubmitting ? 'Accesso in corso...' : 'Accedi alla Dashboard'}
           </Button>
         </form>
       </Form>

@@ -17,12 +17,12 @@ export function QrScannerMock({ onScanSuccess }: { onScanSuccess: (studentId: st
         <QrCode className="w-12 h-12 text-primary" />
       </div>
       <p className="mb-4 text-center text-muted-foreground">
-        Ready to scan student tickets.
+        Pronto per la scansione dei biglietti studente.
       </p>
       <Button onClick={handleMockScan} size="lg">
-        Simulate Student Scan
+        Simula Scansione Studente
       </Button>
-      <p className="mt-2 text-xs text-muted-foreground">(Scanner is simulated for this demo)</p>
+      <p className="mt-2 text-xs text-muted-foreground">(Lo scanner è simulato per questa demo)</p>
     </div>
   );
 }

@@ -25,8 +25,8 @@ export default function StudentDashboard() {
     if (hasBookingInSlot) {
       toast({
         variant: 'destructive',
-        title: 'Booking Limit Reached',
-        description: 'You can only book one company per time slot.',
+        title: 'Limite di Prenotazioni Raggiunto',
+        description: 'Puoi prenotare solo un\'azienda per fascia oraria.',
       });
       return;
     }
@@ -34,8 +34,8 @@ export default function StudentDashboard() {
     const newBooking = { studentId, companyId, timeSlotId };
     setBookings(prev => [...prev, newBooking]);
     toast({
-      title: 'Booking Confirmed!',
-      description: `You're all set with ${companies.find(c => c.id === companyId)?.name}.`,
+      title: 'Prenotazione Confermata!',
+      description: `Hai prenotato con successo con ${companies.find(c => c.id === companyId)?.name}.`,
     });
   };
 
@@ -55,12 +55,12 @@ export default function StudentDashboard() {
     <div className="container mx-auto py-8 px-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-            <h1 className="text-3xl font-bold font-headline tracking-tight">Company Sessions</h1>
-            <p className="text-muted-foreground mt-1">Browse and book sessions with companies.</p>
+            <h1 className="text-3xl font-bold font-headline tracking-tight">Sessioni Aziendali</h1>
+            <p className="text-muted-foreground mt-1">Sfoglia e prenota sessioni con le aziende.</p>
         </div>
         <Button onClick={() => router.push('/student/ticket')} className="mt-4 md:mt-0 group">
             <Ticket className="mr-2 h-4 w-4"/>
-            View My Ticket
+            Visualizza il Mio Biglietto
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
         </Button>
       </div>
@@ -95,7 +95,7 @@ export default function StudentDashboard() {
                         <CardTitle className="font-headline text-xl">{company.name}</CardTitle>
                         <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                             <Users className="h-4 w-4" />
-                            <span>{getBookingsForSlot(slot.id)} / {slot.capacity} booked</span>
+                            <span>{getBookingsForSlot(slot.id)} / {slot.capacity} prenotati</span>
                         </div>
                       </div>
                     </CardHeader>
@@ -111,10 +111,10 @@ export default function StudentDashboard() {
                         {isBooked ? (
                           <>
                             <CheckCircle className="mr-2 h-4 w-4" />
-                            Booked
+                            Prenotato
                           </>
                         ) : (
-                          isFull ? 'Slot Full' : 'Book Session'
+                          isFull ? 'Slot Esaurito' : 'Prenota Sessione'
                         )}
                       </Button>
                     </CardFooter>

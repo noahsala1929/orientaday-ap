@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase';
 
 const formSchema = z.object({
-  pin: z.string().min(6, 'Master PIN must be at least 6 characters.'),
+  pin: z.string().min(6, 'Il PIN Master deve contenere almeno 6 caratteri.'),
 });
 
 export default function TeacherLoginPage() {
@@ -32,7 +32,7 @@ export default function TeacherLoginPage() {
     if (!auth) {
         toast({
             variant: "destructive",
-            title: "Authentication service not ready",
+            title: "Servizio di autenticazione non pronto",
         });
         return;
     }
@@ -41,15 +41,15 @@ export default function TeacherLoginPage() {
         await signInAnonymously(auth);
         
         toast({
-          title: 'Login Successful',
-          description: 'Redirecting to teacher dashboard...',
+          title: 'Accesso Riuscito',
+          description: 'Reindirizzamento alla dashboard insegnante...',
         });
         router.push('/teacher/dashboard');
     } catch (error: any) {
         toast({
             variant: "destructive",
-            title: "Login Failed",
-            description: "Could not log you in. Please try again.",
+            title: "Accesso Fallito",
+            description: "Impossibile effettuare l'accesso. Riprova.",
         });
         console.error("Teacher Login Failed:", error);
     }
@@ -57,8 +57,8 @@ export default function TeacherLoginPage() {
 
   return (
     <AuthLayout
-      title="Teacher Dashboard"
-      description="Enter the master PIN to manage student attendance."
+      title="Dashboard Insegnante"
+      description="Inserisci il PIN master per gestire le presenze degli studenti."
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -67,7 +67,7 @@ export default function TeacherLoginPage() {
             name="pin"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Master PIN</FormLabel>
+                <FormLabel>PIN Master</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="******" {...field} />
                 </FormControl>
@@ -76,7 +76,7 @@ export default function TeacherLoginPage() {
             )}
           />
           <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-             {form.formState.isSubmitting ? 'Logging In...' : 'Login'}
+             {form.formState.isSubmitting ? 'Accesso in corso...' : 'Accedi'}
           </Button>
         </form>
       </Form>

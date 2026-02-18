@@ -45,8 +45,8 @@ function SSOLogin() {
               }
               
               toast({
-                title: 'Login Successful',
-                description: 'You have been securely logged in.',
+                title: 'Accesso Riuscito',
+                description: 'Sei stato autenticato in modo sicuro.',
               });
               
               // Redirect to student dashboard after successful login
@@ -55,8 +55,8 @@ function SSOLogin() {
               console.error('SSO Login Failed:', error);
               toast({
                 variant: 'destructive',
-                title: 'Login Failed',
-                description: 'Could not log you in via SSO. Please try again.',
+                title: 'Accesso SSO Fallito',
+                description: 'Impossibile autenticarti tramite SSO. Riprova.',
               });
               // Redirect back to home on failure
               router.push('/');
@@ -68,21 +68,21 @@ function SSOLogin() {
             // If there's no token, something is wrong. Redirect to home.
             toast({
                 variant: 'destructive',
-                title: 'SSO Error',
-                description: 'No authentication token provided.',
+                title: 'Errore SSO',
+                description: 'Nessun token di autenticazione fornito.',
             });
             router.push('/');
         }
     }, [token, auth, router, toast]);
 
     // Always show a loading screen while processing
-    return <LoadingScreen title="Logging you in securely..." subtitle="Please wait a moment." />;
+    return <LoadingScreen title="Accesso sicuro in corso..." subtitle="Attendi un momento." />;
 }
 
 
 export default function SSOPage() {
     return (
-        <Suspense fallback={<LoadingScreen title="Securing your session..." />}>
+        <Suspense fallback={<LoadingScreen title="Protezione della sessione in corso..." />}>
             <SSOLogin />
         </Suspense>
     )

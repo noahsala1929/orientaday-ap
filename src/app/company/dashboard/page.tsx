@@ -30,14 +30,14 @@ export default function CompanyDashboard() {
       setNotes('');
       setSelectedStudent({ ...studentData, rating: 0, notes: '' });
       toast({
-        title: 'Student Found',
-        description: `${studentData.name} is ready for check-in.`,
+        title: 'Studente Trovato',
+        description: `${studentData.name} è pronto per il check-in.`,
       });
     } else {
       toast({
         variant: 'destructive',
-        title: 'Scan Error',
-        description: 'Student not found in the system.',
+        title: 'Errore Scansione',
+        description: 'Studente non trovato nel sistema.',
       });
     }
   };
@@ -53,8 +53,8 @@ export default function CompanyDashboard() {
     });
     
     toast({
-      title: 'Assessment Saved',
-      description: `Notes and rating for ${selectedStudent.name} have been saved.`,
+      title: 'Valutazione Salvata',
+      description: `Note e valutazione per ${selectedStudent.name} sono state salvate.`,
     });
     
     // Clear selection for next scan
@@ -62,7 +62,7 @@ export default function CompanyDashboard() {
   };
   
   const getSchoolName = (schoolId: string) => {
-    return schools.find(s => s.id === schoolId)?.name || 'Unknown School';
+    return schools.find(s => s.id === schoolId)?.name || 'Scuola Sconosciuta';
   }
 
   return (
@@ -70,8 +70,8 @@ export default function CompanyDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
         <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle className="font-headline text-2xl">Student Check-In</CardTitle>
-            <CardDescription>Use the scanner to check students in for their session.</CardDescription>
+            <CardTitle className="font-headline text-2xl">Check-In Studenti</CardTitle>
+            <CardDescription>Usa lo scanner per fare il check-in degli studenti per la loro sessione.</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow">
             <QrScannerMock onScanSuccess={handleScanSuccess} />
@@ -80,9 +80,9 @@ export default function CompanyDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline text-2xl">Talent Assessment</CardTitle>
+            <CardTitle className="font-headline text-2xl">Valutazione Talento</CardTitle>
             <CardDescription>
-              {selectedStudent ? `Assessing: ${selectedStudent.name}` : 'Scan a student ticket to begin.'}
+              {selectedStudent ? `In valutazione: ${selectedStudent.name}` : 'Scansiona il biglietto di uno studente per iniziare.'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -101,15 +101,15 @@ export default function CompanyDashboard() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium">Talent Rating</label>
+                  <label className="text-sm font-medium">Valutazione Talento</label>
                   <StarRating rating={rating} onRatingChange={setRating} />
                 </div>
 
                 <div>
-                  <label htmlFor="notes" className="text-sm font-medium">Notes</label>
+                  <label htmlFor="notes" className="text-sm font-medium">Note</label>
                   <Textarea
                     id="notes"
-                    placeholder="Add notes about the interaction, skills, potential roles, etc."
+                    placeholder="Aggiungi note sull'interazione, competenze, ruoli potenziali, ecc."
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     rows={6}
@@ -117,14 +117,14 @@ export default function CompanyDashboard() {
                 </div>
 
                 <Button onClick={handleSaveAssessment} className="w-full" size="lg">
-                  <Save className="mr-2 h-4 w-4" /> Save Assessment
+                  <Save className="mr-2 h-4 w-4" /> Salva Valutazione
                 </Button>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-lg h-full bg-background">
                 <UserPlus className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="font-semibold">No Student Selected</p>
-                <p className="text-sm text-muted-foreground">Scan a student's QR ticket to load their profile here.</p>
+                <p className="font-semibold">Nessuno Studente Selezionato</p>
+                <p className="text-sm text-muted-foreground">Scansiona il biglietto QR di uno studente per caricare qui il suo profilo.</p>
               </div>
             )}
           </CardContent>

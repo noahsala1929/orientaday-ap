@@ -1,32 +1,65 @@
 'use client';
 
-import { useReducer } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Trash2, ChevronLeft, CalendarX2 } from 'lucide-react';
-import { bookings, companies, timeSlots, type Booking } from '@/lib/data';
+import { Trash2, ChevronLeft, CalendarX2, Loader2 } from 'lucide-react';
+import { companies, timeSlots, type Booking } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
+import { useUser, useFirestore } from '@/firebase';
+import { collection, query, where, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 
 export default function MyBookingsPage() {
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
   const { toast } = useToast();
-  const studentId = 'student-1'; // Mock current student
+  const { user } = useUser();
+  const firestore = useFirestore();
 
-  const myBookings = bookings.filter(b => b.studentId === studentId);
+  const [myBookings, setMyBookings] = useState<Booking[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleCancelBooking = (companyId: string, timeSlotId: string) => {
-    const bookingIndex = bookings.findIndex(b => b.studentId === studentId && b.companyId === companyId && b.timeSlotId === timeSlotId);
-    if (bookingIndex > -1) {
-      const companyName = companies.find(c => c.id === companyId)?.name;
-      bookings.splice(bookingIndex, 1); // Mutate array
-      forceUpdate(); // Trigger re-render
+  useEffect(() => {
+    if (!firestore || !user) return;
+    
+    setIsLoading(true);
+    const q = query(collection(firestore, 'bookings'), where('studentId', '==', user.uid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const bookingsFromDb = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      } as Booking));
+      setMyBookings(bookingsFromDb);
+      setIsLoading(false);
+    }, (error) => {
+        console.error("Error fetching bookings: ", error);
+        setIsLoading(false);
+        toast({
+            variant: 'destructive',
+            title: 'Errore nel caricamento',
+            description: 'Impossibile caricare le tue prenotazioni.'
+        })
+    });
+
+    return () => unsubscribe();
+  }, [firestore, user, toast]);
+
+  const handleCancelBooking = async (bookingId: string) => {
+    if (!firestore) return;
+    try {
+      await deleteDoc(doc(firestore, 'bookings', bookingId));
       toast({
         title: 'Prenotazione Cancellata',
-        description: `La tua prenotazione con ${companyName} è stata cancellata.`,
+        description: `La tua prenotazione è stata cancellata.`,
       });
+    } catch (error) {
+        console.error("Error cancelling booking: ", error);
+        toast({
+            variant: 'destructive',
+            title: 'Errore',
+            description: 'Impossibile cancellare la prenotazione. Riprova.',
+        });
     }
   };
 
@@ -34,6 +67,14 @@ export default function MyBookingsPage() {
       const company = companies.find(c => c.id === booking.companyId);
       const timeSlot = timeSlots.find(t => t.id === booking.timeSlotId);
       return { company, timeSlot };
+  }
+
+  if (isLoading) {
+      return (
+          <div className="flex items-center justify-center h-[50vh]">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          </div>
+      )
   }
 
   return (
@@ -50,12 +91,12 @@ export default function MyBookingsPage() {
 
       {myBookings.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {myBookings.map((booking, index) => {
+          {myBookings.map((booking) => {
             const { company, timeSlot } = getBookingDetails(booking);
             if (!company || !timeSlot) return null;
 
             return (
-              <Card key={index} className="flex flex-col">
+              <Card key={booking.id} className="flex flex-col">
                 <CardHeader className="flex-row items-start gap-4">
                     <Image
                         data-ai-hint={company.logo.imageHint}
@@ -87,7 +128,7 @@ export default function MyBookingsPage() {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Annulla</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleCancelBooking(booking.companyId, booking.timeSlotId)}>
+                        <AlertDialogAction onClick={() => handleCancelBooking(booking.id)}>
                           Conferma Cancellazione
                         </AlertDialogAction>
                       </AlertDialogFooter>

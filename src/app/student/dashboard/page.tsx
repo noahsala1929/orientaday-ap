@@ -1,49 +1,101 @@
 'use client';
 
-import { useReducer } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { companies, timeSlots, bookings } from '@/lib/data';
+import { companies, timeSlots, type Booking } from '@/lib/data';
 import { CheckCircle, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useUser, useFirestore } from '@/firebase';
+import { collection, addDoc, query, where, onSnapshot, serverTimestamp } from 'firebase/firestore';
 
 export default function StudentDashboard() {
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
   const { toast } = useToast();
-  const router = useRouter();
-  const studentId = 'student-1'; // Mock current student
+  const { user } = useUser();
+  const firestore = useFirestore();
 
-  const handleBooking = (companyId: string, timeSlotId: string) => {
-    // Check if student has already booked in this time slot
-    const hasBookingInSlot = bookings.some(b => b.studentId === studentId && b.timeSlotId === timeSlotId);
+  const [myBookings, setMyBookings] = useState<Booking[]>([]);
+  const [allBookings, setAllBookings] = useState<Booking[]>([]);
+  const [isBooking, setIsBooking] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!firestore || !user) return;
+
+    // Listener for my bookings
+    const myBookingsQuery = query(collection(firestore, 'bookings'), where('studentId', '==', user.uid));
+    const unsubscribeMyBookings = onSnapshot(myBookingsQuery, (snapshot) => {
+      const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Booking));
+      setMyBookings(bookings);
+    });
+
+    // Listener for all bookings
+    const allBookingsQuery = query(collection(firestore, 'bookings'));
+    const unsubscribeAllBookings = onSnapshot(allBookingsQuery, (snapshot) => {
+      const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Booking));
+      setAllBookings(bookings);
+    });
+
+    return () => {
+      unsubscribeMyBookings();
+      unsubscribeAllBookings();
+    };
+  }, [firestore, user]);
+
+  const handleBooking = async (companyId: string, timeSlotId: string) => {
+    if (!user || !firestore) return;
+
+    const bookingId = `${companyId}-${timeSlotId}`;
+    setIsBooking(bookingId);
+
+    const hasBookingInSlot = myBookings.some(b => b.timeSlotId === timeSlotId);
     if (hasBookingInSlot) {
       toast({
         variant: 'destructive',
         title: 'Limite di Prenotazioni Raggiunto',
         description: 'Puoi prenotare solo un\'azienda per fascia oraria.',
       });
+      setIsBooking(null);
       return;
     }
 
-    bookings.push({ studentId, companyId, timeSlotId });
-    forceUpdate();
+    try {
+      await addDoc(collection(firestore, 'bookings'), {
+        studentId: user.uid,
+        studentName: user.displayName || user.email || 'Studente Anonimo',
+        companyId,
+        timeSlotId,
+        createdAt: serverTimestamp(),
+      });
 
-    toast({
-      title: 'Prenotazione Confermata!',
-      description: `Hai prenotato con successo con ${companies.find(c => c.id === companyId)?.name}.`,
-    });
+      toast({
+        title: 'Prenotazione Confermata!',
+        description: `Hai prenotato con successo con ${companies.find(c => c.id === companyId)?.name}.`,
+      });
+    } catch (error) {
+      console.error("Error booking session: ", error);
+      toast({
+        variant: 'destructive',
+        title: 'Errore',
+        description: 'Impossibile completare la prenotazione. Riprova.',
+      });
+    } finally {
+      setIsBooking(null);
+    }
   };
 
   const hasBooking = (companyId: string, timeSlotId: string) => {
-    return bookings.some(b => b.studentId === studentId && b.companyId === companyId && b.timeSlotId === timeSlotId);
+    return myBookings.some(b => b.companyId === companyId && b.timeSlotId === timeSlotId);
   };
   
   const hasBookingInSlot = (timeSlotId: string) => {
-    return bookings.some(b => b.studentId === studentId && b.timeSlotId === timeSlotId);
+    return myBookings.some(b => b.timeSlotId === timeSlotId);
+  }
+
+  const getBookingsCountForSlot = (companyId: string, timeSlotId: string) => {
+      return allBookings.filter(b => b.timeSlotId === timeSlotId && b.companyId === companyId).length;
   }
 
   return (
@@ -65,13 +117,13 @@ export default function StudentDashboard() {
           <TabsContent key={slot.id} value={slot.id}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
               {companies.map(company => {
-                const isBooked = hasBooking(company.id, slot.id);
-                const slotIsBookedByStudent = hasBookingInSlot(slot.id);
+                const isBookedByMe = hasBooking(company.id, slot.id);
+                const slotIsBookedByMe = hasBookingInSlot(slot.id);
 
-                const bookingsForCompany = bookings.filter(b => b.timeSlotId === slot.id && b.companyId === company.id);
-                const bookingsCount = bookingsForCompany.length;
+                const bookingsCount = getBookingsCountForSlot(company.id, slot.id);
                 const isFull = bookingsCount >= slot.capacity;
                 const progressValue = (bookingsCount / slot.capacity) * 100;
+                const currentBookingId = `${company.id}-${slot.id}`;
 
                 return (
                   <Card key={company.id} className="flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl rounded-2xl">
@@ -105,9 +157,9 @@ export default function StudentDashboard() {
                       <Button
                         className="w-full"
                         onClick={() => handleBooking(company.id, slot.id)}
-                        disabled={isBooked || (slotIsBookedByStudent && !isBooked) || isFull}
+                        disabled={isBooking !== null || isBookedByMe || (slotIsBookedByMe && !isBookedByMe) || isFull}
                       >
-                        {isBooked ? (
+                        {isBooking === currentBookingId ? 'Prenotazione in corso...' : isBookedByMe ? (
                           <>
                             <CheckCircle className="mr-2 h-4 w-4" />
                             Prenotato

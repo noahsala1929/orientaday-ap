@@ -30,7 +30,9 @@ export interface Student {
 }
 
 export interface Booking {
+  id: string; // Firestore document ID
   studentId: string;
+  studentName: string;
   companyId: string;
   timeSlotId: string;
 }
@@ -77,22 +79,4 @@ export const students: Student[] = [
   { id: 'student-6', name: 'Fiona Garcia', schoolId: 'brookfield', email: 'fiona.g@example.com', status: 'pending' },
   { id: 'student-7', name: 'George Wilson', schoolId: 'riverdale', email: 'george.w@example.com', status: 'pending' },
   { id: 'student-8', name: 'Hannah Smith', schoolId: 'northwood', email: 'hannah.s@example.com', status: 'pending' },
-];
-
-// Mock bookings:
-export let bookings: Booking[] = [
-  // Slot 1: 09:00 - 09:40
-  { studentId: 'student-1', companyId: 'ducati', timeSlotId: 'slot-1' },
-  { studentId: 'student-3', companyId: 'ducati', timeSlotId: 'slot-1' },
-  { studentId: 'student-2', companyId: 'ferrari', timeSlotId: 'slot-1' },
-
-  // Slot 2: 09:50 - 10:30
-  { studentId: 'student-4', companyId: 'lamborghini', timeSlotId: 'slot-2' },
-  { studentId: 'student-5', companyId: 'ducati', timeSlotId: 'slot-2' },
-  { studentId: 'student-1', companyId: 'marchesini-group', timeSlotId: 'slot-2' },
-
-  // Slot 3: 10:40 - 11:20
-  { studentId: 'student-6', companyId: 'ferrari', timeSlotId: 'slot-3' },
-  { studentId: 'student-7', companyId: 'ferrari', timeSlotId: 'slot-3' },
-  { studentId: 'student-8', companyId: 'ima-group', timeSlotId: 'slot-3' },
 ];

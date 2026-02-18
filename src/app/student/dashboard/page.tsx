@@ -60,9 +60,9 @@ export default function StudentDashboard() {
       </div>
 
       <Tabs defaultValue={timeSlots[0].id} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3 rounded-full">
           {timeSlots.map(slot => (
-            <TabsTrigger key={slot.id} value={slot.id}>{slot.label}</TabsTrigger>
+            <TabsTrigger key={slot.id} value={slot.id} className="rounded-full data-[state=active]:shadow-lg">{slot.label}</TabsTrigger>
           ))}
         </TabsList>
         {timeSlots.map(slot => (
@@ -78,7 +78,7 @@ export default function StudentDashboard() {
                 const progressValue = (bookingsCount / slot.capacity) * 100;
 
                 return (
-                  <Card key={company.id} className="flex flex-col">
+                  <Card key={company.id} className="flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl rounded-2xl">
                     <CardHeader className="flex-row items-start gap-4">
                       <Image
                         data-ai-hint={company.logo.imageHint}

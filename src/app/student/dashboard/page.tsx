@@ -6,12 +6,10 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { companies, timeSlots, bookings as initialBookings, type Booking } from '@/lib/data';
-import { CheckCircle, Clock, Users, ArrowRight, Ticket } from 'lucide-react';
+import { CheckCircle, Users, ArrowRight, Ticket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 
 export default function StudentDashboard() {
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
@@ -47,10 +45,6 @@ export default function StudentDashboard() {
     return bookings.some(b => b.studentId === studentId && b.timeSlotId === timeSlotId);
   }
 
-  const getBookingsForSlot = (timeSlotId: string) => {
-    return bookings.filter(b => b.timeSlotId === timeSlotId).length;
-  };
-
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -77,8 +71,11 @@ export default function StudentDashboard() {
               {companies.map(company => {
                 const isBooked = hasBooking(company.id, slot.id);
                 const slotIsBookedByStudent = hasBookingInSlot(slot.id);
-                const bookingsCount = getBookingsForSlot(slot.id);
+
+                const bookingsForCompany = bookings.filter(b => b.timeSlotId === slot.id && b.companyId === company.id);
+                const bookingsCount = bookingsForCompany.length;
                 const isFull = bookingsCount >= slot.capacity;
+                const progressValue = (bookingsCount / slot.capacity) * 100;
 
                 return (
                   <Card key={company.id} className="flex flex-col">
@@ -93,14 +90,20 @@ export default function StudentDashboard() {
                       />
                       <div>
                         <CardTitle className="font-headline text-xl">{company.name}</CardTitle>
-                        <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                            <Users className="h-4 w-4" />
-                            <span>{getBookingsForSlot(slot.id)} / {slot.capacity} prenotati</span>
-                        </div>
+                        <CardDescription className="mt-1 line-clamp-3 text-sm">{company.description}</CardDescription>
                       </div>
                     </CardHeader>
-                    <CardContent className="flex-grow">
-                      <CardDescription>{company.description}</CardDescription>
+                    <CardContent className="flex-grow pt-4 flex flex-col justify-end">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4" />
+                                <span>Posti prenotati</span>
+                            </div>
+                            <span>{bookingsCount} / {slot.capacity}</span>
+                        </div>
+                        <Progress value={progressValue} className="h-2" />
+                      </div>
                     </CardContent>
                     <CardFooter>
                       <Button

@@ -34,10 +34,10 @@ export interface Booking {
 }
 
 export const schools: School[] = [
-  { id: 'northwood', name: 'Northwood High School' },
-  { id: 'riverdale', name: 'Riverdale Academy' },
-  { id: 'summit', name: 'Summit Charter School' },
-  { id: 'brookfield', name: 'Brookfield International' },
+  { id: 'aldini-valeriani', name: 'Istituto Aldini Valeriani' },
+  { id: 'belluzzi-fioravanti', name: 'IIS Belluzzi-Fioravanti' },
+  { id: 'crescenzi-pacinotti-sirani', name: 'IIS Crescenzi-Pacinotti-Sirani' },
+  { id: 'rosa-luxemburg', name: 'ITCS Rosa Luxemburg' },
 ];
 
 export const companies: Company[] = [

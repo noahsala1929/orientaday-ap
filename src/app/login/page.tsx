@@ -136,12 +136,6 @@ export default function LoginPage() {
       <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
         {isGoogleLoading ? <span className="animate-pulse">Verifica...</span> : <><GoogleIcon className="mr-2 h-5 w-5" /> Accedi con Google</>}
       </Button>
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        Non hai un account?{' '}
-        <Link href="/register" passHref>
-          <span className="font-semibold text-primary hover:underline cursor-pointer">Registrati</span>
-        </Link>
-      </p>
     </AuthLayout>
   );
 }

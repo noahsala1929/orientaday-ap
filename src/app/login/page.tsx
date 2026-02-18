@@ -17,7 +17,7 @@ import { useAuth } from '@/firebase';
 import Link from 'next/link';
 
 const formSchema = z.object({
-  email: z.string().email('Per favore inserisci un\'email valida.'),
+  email: z.string().email("Per favore inserisci un'email valida."),
   password: z.string().min(1, 'La password è richiesta.'),
 });
 
@@ -42,20 +42,34 @@ export default function LoginPage() {
     defaultValues: { email: '', password: '' },
   });
 
+  // A simple way to determine the user's role based on email or other data
+  const determineUserRoleAndRedirect = (user: any) => {
+    // This is a mock logic. Replace with your actual role determination logic.
+    // For example, you might check a custom claim or a Firestore document.
+    const email = user.email || "";
+    if (email.includes('teacher.com') || email.includes('northwood.edu')) {
+        router.push('/teacher/dashboard');
+    } else if (email.includes('company.com') || email.includes('innovate.com')) {
+        router.push('/company/dashboard');
+    } else {
+        router.push('/student/dashboard');
+    }
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!auth) return;
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla dashboard...' });
-      router.push('/student/dashboard');
+      determineUserRoleAndRedirect(userCredential.user);
     } catch (error: any) {
       console.error('Login Failed:', error);
       if (error.code === 'auth/unauthorized-domain') {
         toast({
           variant: "destructive",
           title: "Dominio Non Autorizzato",
-          description: "Questo sito non è configurato per l'accesso. Contatta l'amministratore.",
+          description: "L'accesso da questo sito non è abilitato. Contatta l'amministratore.",
         });
       } else {
         toast({
@@ -74,16 +88,22 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const userCredential = await signInWithPopup(auth, provider);
       toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla dashboard...' });
-      router.push('/student/dashboard');
+      determineUserRoleAndRedirect(userCredential.user);
     } catch (error: any) {
       console.error('Google Sign In Failed:', error);
-      if (error.code === 'auth/unauthorized-domain') {
+       if (error.code === 'auth/unauthorized-domain') {
         toast({
           variant: "destructive",
           title: "Dominio Non Autorizzato",
-          description: "Questo sito non è configurato per l'accesso. Contatta l'amministratore.",
+          description: "L'accesso da questo sito non è abilitato. Contatta l'amministratore.",
+        });
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        toast({
+            variant: "default",
+            title: "Accesso Annullato",
+            description: "La finestra di accesso di Google è stata chiusa.",
         });
       } else {
         toast({

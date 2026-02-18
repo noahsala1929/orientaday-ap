@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyRound, LogIn } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -23,6 +24,7 @@ export function SiteLockPage() {
   const { unlockSite } = useSiteLock();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,9 +39,8 @@ export function SiteLockPage() {
         title: 'Accesso Confermato',
         description: "Stai per essere reindirizzato alla pagina di selezione ruolo.",
       });
-      // This updates the provider's state, which will cause this component
-      // to unmount and the actual page content to be rendered.
       unlockSite();
+      router.replace('/');
     } else {
       toast({
         variant: "destructive",

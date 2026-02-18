@@ -26,7 +26,7 @@ export function Logo({ size = 'md', className }: LogoProps) {
   return (
     <Link href="/" className={cn("flex items-center gap-2", className)}>
       <Briefcase className={cn(sizeClasses[size].icon, 'text-primary')} />
-      <span className={cn(sizeClasses[size].text, 'font-bold font-headline text-primary-foreground bg-primary px-2 rounded-md')}>
+      <span className={cn(sizeClasses[size].text, 'font-bold font-headline text-primary-foreground bg-gradient-primary px-2 rounded-md')}>
         OrientaDay
       </span>
     </Link>

@@ -41,12 +41,20 @@ export default function ForgotPasswordPage() {
       });
       setTimeout(() => router.push('/login'), 3000);
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Invio Fallito",
-        description: "Impossibile inviare l'email. Controlla che l'indirizzo sia corretto.",
-      });
       console.error('Password Reset Failed:', error);
+      if (error.code === 'auth/unauthorized-domain') {
+        toast({
+          variant: 'destructive',
+          title: 'Dominio Non Autorizzato',
+          description: "Questo sito non è configurato per l'accesso. Contatta l'amministratore.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Invio Fallito",
+          description: "Impossibile inviare l'email. Controlla che l'indirizzo sia corretto.",
+        });
+      }
     } finally {
       setIsLoading(false);
     }

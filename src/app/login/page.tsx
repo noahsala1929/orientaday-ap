@@ -50,12 +50,20 @@ export default function LoginPage() {
       toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla dashboard...' });
       router.push('/student/dashboard');
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Accesso Fallito",
-        description: "Email o password non corretti. Riprova.",
-      });
       console.error('Login Failed:', error);
+      if (error.code === 'auth/unauthorized-domain') {
+        toast({
+          variant: "destructive",
+          title: "Dominio Non Autorizzato",
+          description: "Questo sito non è configurato per l'accesso. Contatta l'amministratore.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Accesso Fallito",
+          description: "Email o password non corretti. Riprova.",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -70,12 +78,20 @@ export default function LoginPage() {
       toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla dashboard...' });
       router.push('/student/dashboard');
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Accesso Google Fallito",
-        description: "Impossibile accedere con Google. Riprova.",
-      });
       console.error('Google Sign In Failed:', error);
+      if (error.code === 'auth/unauthorized-domain') {
+        toast({
+          variant: "destructive",
+          title: "Dominio Non Autorizzato",
+          description: "Questo sito non è configurato per l'accesso. Contatta l'amministratore.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Accesso Google Fallito",
+          description: "Impossibile accedere con Google. Riprova.",
+        });
+      }
     } finally {
       setIsGoogleLoading(false);
     }

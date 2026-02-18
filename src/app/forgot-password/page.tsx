@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
         toast({
           variant: 'destructive',
           title: 'Dominio Non Autorizzato',
-          description: "Questo sito non è configurato per l'accesso. Contatta l'amministratore.",
+          description: "Aggiungi 'localhost' ai domini autorizzati nelle impostazioni di Firebase Authentication per lo sviluppo locale.",
         });
       } else {
         toast({

@@ -66,7 +66,7 @@ export default function LoginPage() {
         toast({
           variant: "destructive",
           title: "Dominio Non Autorizzato",
-          description: "L'accesso da questo sito non è abilitato. Contatta l'amministratore.",
+          description: "Aggiungi 'localhost' ai domini autorizzati nelle impostazioni di Firebase Authentication per lo sviluppo locale.",
         });
       } else {
         toast({
@@ -93,7 +93,7 @@ export default function LoginPage() {
         toast({
           variant: "destructive",
           title: "Dominio Non Autorizzato",
-          description: "L'accesso da questo sito non è abilitato. Contatta l'amministratore.",
+          description: "Aggiungi 'localhost' ai domini autorizzati nelle impostazioni di Firebase Authentication per lo sviluppo locale.",
         });
       } else if (error.code === 'auth/popup-closed-by-user') {
         toast({

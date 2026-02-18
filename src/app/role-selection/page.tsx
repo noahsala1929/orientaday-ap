@@ -13,7 +13,7 @@ const roles = [
   },
   {
     name: 'Azienda',
-    href: '/company/dashboard',
+    href: '/company/login',
     icon: <Building className="h-12 w-12 text-primary" />,
     description: 'Valuta gli studenti e gestisci i talenti incontrati durante l\'evento.'
   },

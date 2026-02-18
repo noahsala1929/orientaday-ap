@@ -7,6 +7,7 @@ import {Firestore} from 'firebase/firestore';
 
 import {FirebaseProvider} from '@/firebase/provider';
 import {initializeFirebase} from '@/firebase';
+import { SiteLockProvider } from '@/components/site-lock-provider';
 
 // NOTE: This is a client-only provider that is used to wrap the
 // FirebaseProvider. This is necessary because the FirebaseProvider
@@ -36,7 +37,7 @@ export function FirebaseClientProvider({children}: {children: React.ReactNode}) 
       auth={firebase.auth}
       firestore={firebase.firestore}
     >
-      {children}
+      <SiteLockProvider>{children}</SiteLockProvider>
     </FirebaseProvider>
   );
 }

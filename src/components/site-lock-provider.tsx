@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import { SiteLockPage } from './site-lock-page';
-import { useRouter } from 'next/navigation';
 
 interface SiteLockContextType {
   isUnlocked: boolean;
@@ -21,16 +20,15 @@ export function useSiteLock() {
 
 export function SiteLockProvider({ children }: { children: React.ReactNode }) {
   const [isUnlocked, setIsUnlocked] = useState(false);
-  const router = useRouter();
 
   const unlockSite = () => {
     setIsUnlocked(true);
-    router.refresh();
   };
 
   return (
     <SiteLockContext.Provider value={{ isUnlocked, unlockSite }}>
-      {isUnlocked ? children : <SiteLockPage />}
+      <div style={{ display: isUnlocked ? 'block' : 'none' }} className="h-full">{children}</div>
+      {!isUnlocked && <SiteLockPage />}
     </SiteLockContext.Provider>
   );
 }

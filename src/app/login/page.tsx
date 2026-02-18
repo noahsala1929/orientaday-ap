@@ -42,18 +42,10 @@ export default function LoginPage() {
     defaultValues: { email: '', password: '' },
   });
 
-  // A simple way to determine the user's role based on email or other data
-  const determineUserRoleAndRedirect = (user: any) => {
-    // This is a mock logic. Replace with your actual role determination logic.
-    // For example, you might check a custom claim or a Firestore document.
-    const email = user.email || "";
-    if (email.includes('teacher.com') || email.includes('northwood.edu')) {
-        router.push('/teacher/dashboard');
-    } else if (email.includes('company.com') || email.includes('innovate.com')) {
-        router.push('/company/dashboard');
-    } else {
-        router.push('/student/dashboard');
-    }
+  // Redirect to role selection page after successful login
+  const handleSuccessfulLogin = (user: any) => {
+    toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla selezione del ruolo...' });
+    router.push('/role-selection');
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -61,8 +53,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-      toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla dashboard...' });
-      determineUserRoleAndRedirect(userCredential.user);
+      handleSuccessfulLogin(userCredential.user);
     } catch (error: any) {
       console.error('Login Failed:', error);
       if (error.code === 'auth/unauthorized-domain') {
@@ -89,8 +80,7 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
     try {
       const userCredential = await signInWithPopup(auth, provider);
-      toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla dashboard...' });
-      determineUserRoleAndRedirect(userCredential.user);
+      handleSuccessfulLogin(userCredential.user);
     } catch (error: any) {
       console.error('Google Sign In Failed:', error);
        if (error.code === 'auth/unauthorized-domain') {
@@ -118,7 +108,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthLayout title="Accedi" description="Accedi al tuo account Orienta">
+    <AuthLayout title="Accedi" description="Accedi al tuo account OrientaDay">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField

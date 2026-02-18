@@ -11,7 +11,7 @@ export default function HomePage() {
               </span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              La piattaforma per connettere studenti, scuole e aziende.
+              L'evento per connettere studenti, istituzioni scolastiche e aziende.
             </p>
           </div>
         </div>

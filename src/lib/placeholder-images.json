@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "company-logo-1",
+      "description": "Innovate Inc. Logo",
+      "imageUrl": "https://images.unsplash.com/photo-1762330918172-e19bcb6a7172?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0ZWNoJTIwbG9nb3xlbnwwfHx8fDE3NzEzMjAwNTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tech logo"
+    },
+    {
+      "id": "company-logo-2",
+      "description": "Quantum Dynamics Logo",
+      "imageUrl": "https://images.unsplash.com/photo-1771086951044-70d2b35cfb51?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzY2llbmNlJTIwbG9nb3xlbnwwfHx8fDE3NzE0MTE3NzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "science logo"
+    },
+    {
+      "id": "company-logo-3",
+      "description": "Eco Solutions Logo",
+      "imageUrl": "https://images.unsplash.com/photo-1662027044921-6febc57a0c53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxuYXR1cmUlMjBsb2dvfGVufDB8fHx8MTc3MTMwNDQ3MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "nature logo"
+    },
+    {
+      "id": "company-logo-4",
+      "description": "Health Forward Logo",
+      "imageUrl": "https://images.unsplash.com/photo-1764795850216-7bba254f8dcf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtZWRpY2FsJTIwbG9nb3xlbnwwfHx8fDE3NzEzMzU3OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "medical logo"
+    },
+    {
+      "id": "company-logo-5",
+      "description": "Nexus Robotics Logo",
+      "imageUrl": "https://images.unsplash.com/photo-1694878982190-6e37aa9eb306?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyb2JvdCUyMGxvZ298ZW58MHx8fHwxNzcxMzI1MDM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot logo"
+    },
+    {
+      "id": "company-logo-6",
+      "description": "Stellar Aerospace Logo",
+      "imageUrl": "https://images.unsplash.com/photo-1540834405921-afd517e5dcc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzcGFjZSUyMGxvZ298ZW58MHx8fHwxNzcxNDExNzc2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "space logo"
+    }
+  ]
 }

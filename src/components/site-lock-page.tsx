@@ -13,10 +13,10 @@ import { AuthLayout } from '@/components/auth-layout';
 import { useToast } from '@/hooks/use-toast';
 import { useSiteLock } from './site-lock-provider';
 
-const ADMIN_PIN = '2024';
+const ADMIN_PIN = '72943816';
 
 const formSchema = z.object({
-  pin: z.string().length(4, "Il PIN deve essere di 4 cifre."),
+  pin: z.string().length(8, "Il PIN deve essere di 8 cifre."),
 });
 
 export function SiteLockPage() {
@@ -34,7 +34,7 @@ export function SiteLockPage() {
     setTimeout(() => {
       if (values.pin === ADMIN_PIN) {
         toast({
-          title: 'Accesso Admin Confermato',
+          title: 'Accesso Confermato',
           description: 'Benvenuto.',
         });
         unlockSite();
@@ -51,7 +51,7 @@ export function SiteLockPage() {
   }
 
   return (
-    <AuthLayout title="Lavori in Corso" description="Il sito è in fase di sviluppo. Accesso consentito solo agli amministratori.">
+    <AuthLayout title="Lavori in Corso" description="Il sito è in fase di sviluppo. Accesso consentito solo tramite PIN.">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -64,10 +64,10 @@ export function SiteLockPage() {
                         <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input 
                             type="password" 
-                            placeholder="PIN Amministratore" 
+                            placeholder="••••••••" 
                             {...field} 
                             className="pl-10 text-center tracking-[1em]"
-                            maxLength={4}
+                            maxLength={8}
                             autoComplete="off"
                         />
                     </div>

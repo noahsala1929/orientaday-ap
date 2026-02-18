@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Header } from "@/components/header";
 import { Loader2 } from 'lucide-react';
 import { companies } from '@/lib/data';
@@ -18,14 +18,14 @@ export default function CompanyLayout({
 
   useEffect(() => {
     const companyId = sessionStorage.getItem('companyId');
-    if (!companyId) {
-        router.replace('/company/login');
-    } else {
+    if (companyId) {
         const company = companies.find(c => c.id === companyId);
         setCompanyName(company?.name || "Azienda");
         setIsCompanyAuth(true);
-        setIsChecking(false);
+    } else {
+        router.replace('/company/login');
     }
+    setIsChecking(false);
   }, [router]);
 
   if (isChecking) {

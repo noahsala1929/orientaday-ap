@@ -18,14 +18,14 @@ export default function TeacherLayout({
 
   useEffect(() => {
     const schoolId = sessionStorage.getItem('schoolId');
-    if (!schoolId) {
-        router.replace('/teacher/login');
-    } else {
+    if (schoolId) {
         const school = schools.find(s => s.id === schoolId);
         setSchoolName(school?.name || "Insegnante");
         setIsTeacherAuth(true);
-        setIsChecking(false);
+    } else {
+        router.replace('/teacher/login');
     }
+    setIsChecking(false);
   }, [router]);
   
   if (isChecking) {

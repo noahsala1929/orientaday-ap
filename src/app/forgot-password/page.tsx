@@ -42,20 +42,11 @@ export default function ForgotPasswordPage() {
       setTimeout(() => router.push('/login'), 3000);
     } catch (error: any) {
       console.error('Password Reset Failed:', error);
-      if (error.code === 'auth/unauthorized-domain') {
-        toast({
-          variant: "destructive",
-          title: "Errore di Configurazione Firebase",
-          description: "Il progetto Firebase nel codice non corrisponde a quello configurato. Controlla `src/firebase/config.ts` e assicurati che il `projectId` sia corretto.",
-          duration: 10000,
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Invio Fallito",
-          description: "Impossibile inviare l'email. Controlla che l'indirizzo sia corretto.",
-        });
-      }
+      toast({
+        variant: "destructive",
+        title: "Invio Fallito",
+        description: "Impossibile inviare l'email. Controlla l'indirizzo o che il dominio sia autorizzato su Firebase.",
+      });
     } finally {
       setIsLoading(false);
     }

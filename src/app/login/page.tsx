@@ -62,20 +62,11 @@ export default function LoginPage() {
       handleSuccessfulLogin(userCredential.user);
     } catch (error: any) {
       console.error('Login Failed:', error);
-      if (error.code === 'auth/unauthorized-domain') {
-        toast({
-          variant: "destructive",
-          title: "Errore di Configurazione Firebase",
-          description: "Il progetto Firebase nel codice non corrisponde a quello configurato. Controlla `src/firebase/config.ts` e assicurati che il `projectId` sia corretto.",
-          duration: 10000,
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Accesso Fallito",
-          description: "Email o password non corretti. Riprova.",
-        });
-      }
+      toast({
+        variant: "destructive",
+        title: "Accesso Fallito",
+        description: "Email o password non corretti, oppure il dominio non è autorizzato su Firebase. Riprova.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -90,14 +81,7 @@ export default function LoginPage() {
       handleSuccessfulLogin(userCredential.user);
     } catch (error: any) {
       console.error('Google Sign In Failed:', error);
-       if (error.code === 'auth/unauthorized-domain') {
-        toast({
-          variant: "destructive",
-          title: "Errore di Configurazione Firebase",
-          description: "Il progetto Firebase nel codice non corrisponde a quello configurato. Controlla `src/firebase/config.ts` e assicurati che il `projectId` sia corretto.",
-          duration: 10000,
-        });
-      } else if (error.code === 'auth/popup-closed-by-user') {
+      if (error.code === 'auth/popup-closed-by-user') {
         toast({
             variant: "default",
             title: "Accesso Annullato",
@@ -107,7 +91,7 @@ export default function LoginPage() {
         toast({
           variant: "destructive",
           title: "Accesso Google Fallito",
-          description: "Impossibile accedere con Google. Riprova.",
+          description: "Impossibile accedere con Google. Potrebbe essere un problema di dominio non autorizzato su Firebase.",
         });
       }
     } finally {

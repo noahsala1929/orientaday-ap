@@ -20,7 +20,7 @@ export default function HomePage() {
           Entra per scoprire le opportunità e gestire la tua giornata.
         </p>
          <Button asChild className="mt-10 group" size="lg">
-            <Link href="/role-selection">
+            <Link href="/login">
               Entra nel portale
               <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
             </Link>

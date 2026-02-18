@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,7 +22,6 @@ const formSchema = z.object({
 export function SiteLockPage() {
   const { unlockSite } = useSiteLock();
   const { toast } = useToast();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -37,10 +35,11 @@ export function SiteLockPage() {
     if (values.pin === ADMIN_PIN) {
       toast({
         title: 'Accesso Confermato',
-        description: "Verrai reindirizzato alla pagina di selezione ruolo.",
+        description: "Stai per essere reindirizzato alla pagina di selezione ruolo.",
       });
+      // This updates the provider's state, which will cause this component
+      // to unmount and the actual page content to be rendered.
       unlockSite();
-      router.push('/');
     } else {
       toast({
         variant: "destructive",

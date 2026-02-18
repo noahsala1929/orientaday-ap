@@ -16,7 +16,7 @@ export default function CompanyLayout({
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login/company');
+      router.push('/login');
     }
   }, [user, loading, router]);
 

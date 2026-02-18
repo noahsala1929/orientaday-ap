@@ -16,7 +16,7 @@ export default function StudentLayout({
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login/student');
+      router.push('/login');
     }
   }, [user, loading, router]);
 

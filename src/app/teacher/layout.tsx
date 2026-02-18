@@ -16,7 +16,7 @@ export default function TeacherLayout({
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login/teacher');
+      router.push('/login');
     }
   }, [user, loading, router]);
 

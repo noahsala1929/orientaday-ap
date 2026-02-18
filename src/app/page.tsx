@@ -1,10 +1,82 @@
+'use client';
+
+import React, { Suspense, useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { signInWithCustomToken, updateProfile } from 'firebase/auth';
+import { ArrowRight, Building, School, UserCheck, Loader2 } from 'lucide-react';
+
+import { useAuth } from '@/firebase';
+import { createCustomToken } from '@/app/sso/actions';
+import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Building, School, UserCheck } from "lucide-react";
-import Link from "next/link";
 import { Logo } from "@/components/logo";
 
-export default function Home() {
+function LoadingScreen({ title, subtitle }: { title: string, subtitle?: string }) {
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+          <h1 className="text-xl font-semibold">{title}</h1>
+          {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
+        </div>
+    );
+}
+
+function SSOLogic() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const auth = useAuth();
+    const { toast } = useToast();
+    const token = searchParams.get('token');
+
+    useEffect(() => {
+        if (token && auth) {
+          const performSignIn = async () => {
+            try {
+              const { customToken, displayName } = await createCustomToken(token);
+              const userCredential = await signInWithCustomToken(auth, customToken);
+              
+              if (userCredential.user && displayName) {
+                await updateProfile(userCredential.user, {
+                    displayName: displayName,
+                });
+              }
+              
+              toast({
+                title: 'Login Successful',
+                description: 'You have been securely logged in.',
+              });
+              
+              router.push('/student/dashboard');
+            } catch (error) {
+              console.error('SSO Login Failed:', error);
+              toast({
+                variant: 'destructive',
+                title: 'Login Failed',
+                description: 'Could not log you in via SSO. Please try again.',
+              });
+              router.push('/');
+            }
+          };
+    
+          performSignIn();
+        }
+    }, [token, auth, router, toast]);
+
+    if (token) {
+        return <LoadingScreen title="Logging you in securely..." subtitle="Please wait a moment." />;
+    }
+
+    return <HomePageContent />;
+}
+
+function HomePageContent() {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+      setIsClient(true)
+  }, []);
+
   const roles = [
     {
       title: "For Students",
@@ -63,8 +135,16 @@ export default function Home() {
         ))}
       </div>
       <footer className="py-8 mt-16 text-center text-muted-foreground text-sm">
-        <p>&copy; {new Date().getFullYear()} OrientaDay. All rights reserved.</p>
+        {isClient ? <p>&copy; {new Date().getFullYear()} OrientaDay. All rights reserved.</p> : <p>&copy; OrientaDay. All rights reserved.</p> }
       </footer>
     </main>
   );
+}
+
+export default function Home() {
+    return (
+        <Suspense fallback={<LoadingScreen title="Loading..." />}>
+            <SSOLogic />
+        </Suspense>
+    )
 }

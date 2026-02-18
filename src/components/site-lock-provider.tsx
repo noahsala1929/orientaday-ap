@@ -17,16 +17,10 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    const validHostnames = ['orientaday.orientaedu.it', 'localhost'];
-    // This check ensures the lock only runs on the intended domain.
-    if (typeof window !== 'undefined' && !validHostnames.includes(window.location.hostname)) {
-      setIsUnlocked(true);
-      setIsClient(true);
-      return;
-    }
-
+    // This now runs only on the client.
     setIsClient(true);
     try {
+      // Check if the user has already unlocked the site in this session.
       if (sessionStorage.getItem('orientaday-admin-unlocked') === 'true') {
         setIsUnlocked(true);
       }
@@ -38,6 +32,7 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
   const handleUnlock = () => {
     if (pin === ADMIN_PIN) {
       try {
+        // If PIN is correct, save the unlocked state in sessionStorage.
         sessionStorage.setItem('orientaday-admin-unlocked', 'true');
         setIsUnlocked(true);
         setError('');
@@ -47,21 +42,22 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
         setIsUnlocked(true);
       }
     } else {
-      setError('Invalid code. Please try again.');
+      setError('Codice non valido. Riprova.');
       setPin('');
     }
   };
   
   if (!isClient) {
-    // Avoids hydration mismatch by not rendering anything different on the server.
-    // A loading spinner could be placed here.
+    // Render nothing on the server to avoid hydration mismatches.
     return null;
   }
 
   if (isUnlocked) {
+    // If unlocked, show the actual app content.
     return <>{children}</>;
   }
 
+  // If not unlocked, show the PIN entry screen.
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md shadow-2xl">
@@ -69,20 +65,20 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
           <div className="mx-auto mb-4">
             <Logo />
           </div>
-          <CardTitle className="font-headline text-2xl">Work in Progress</CardTitle>
+          <CardTitle className="font-headline text-2xl">Lavori in Corso</CardTitle>
           <CardDescription>
-            The OrientaDay site is almost ready and will be available to the public soon.
+            Il sito OrientaDay è quasi pronto e sarà presto disponibile al pubblico.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <p className="text-center text-sm text-muted-foreground">
-              If you are an administrator, enter the access code to view the site.
+              Se sei un amministratore, inserisci il codice di accesso per visualizzare il sito.
             </p>
             <div className="flex gap-2">
               <Input
                 type="password"
-                placeholder="Admin access code"
+                placeholder="Codice di accesso admin"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 onKeyDown={(e) => {
@@ -93,7 +89,7 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
               />
               <Button onClick={handleUnlock}>
                 <ShieldCheck className="mr-2 h-4 w-4" />
-                Access
+                Accedi
               </Button>
             </div>
             {error && (

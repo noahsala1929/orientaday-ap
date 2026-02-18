@@ -43,6 +43,13 @@ function SSOLogin() {
                     displayName: displayName,
                 });
               }
+
+              try {
+                // Unlock the site lock for this session
+                sessionStorage.setItem('orientaday-admin-unlocked', 'true');
+              } catch (e) {
+                 console.error("Could not access sessionStorage to unlock site.", e);
+              }
               
               toast({
                 title: 'Accesso Riuscito',
@@ -51,12 +58,18 @@ function SSOLogin() {
               
               // Redirect to student dashboard after successful login
               router.push('/student/dashboard');
-            } catch (error) {
+            } catch (error: any) {
               console.error('SSO Login Failed:', error);
+
+              let description = 'Impossibile autenticarti tramite SSO. Riprova.';
+              if (error?.message?.includes('Failed to create custom token')) {
+                description = 'Errore di configurazione del server SSO. Contatta il supporto tecnico.';
+              }
+              
               toast({
                 variant: 'destructive',
                 title: 'Accesso SSO Fallito',
-                description: 'Impossibile autenticarti tramite SSO. Riprova.',
+                description: description,
               });
               // Redirect back to home on failure
               router.push('/');

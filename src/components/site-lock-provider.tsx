@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, type ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { ShieldCheck, ShieldOff } from 'lucide-react';
 const ADMIN_PIN = '72943816'; 
 
 export function SiteLockProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
@@ -47,6 +49,11 @@ export function SiteLockProvider({ children }: { children: ReactNode }) {
     }
   };
   
+  // Allow the SSO page to bypass the lock
+  if (pathname === '/sso') {
+    return <>{children}</>;
+  }
+
   if (!isClient) {
     // Render nothing on the server to avoid hydration mismatches.
     return null;

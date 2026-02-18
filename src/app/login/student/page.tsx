@@ -40,6 +40,14 @@ export default function StudentLoginPage() {
         });
         return;
     }
+    if (values.pin !== '1929') {
+        toast({
+            variant: "destructive",
+            title: "Accesso Fallito",
+            description: "PIN non valido. Riprova.",
+        });
+        return;
+    }
     try {
         // This is a mock login. In a real app, you'd verify the PIN against a backend service
         // and get a custom token to sign in. For this demo, we sign in anonymously.

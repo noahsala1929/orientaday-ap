@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInAnonymously } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -14,8 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase';
 
 const formSchema = z.object({
-  email: z.string().email('Per favore inserisci un indirizzo email valido.'),
-  password: z.string().min(8, 'La password deve contenere almeno 8 caratteri.'),
+  pin: z.string().length(4, 'Il PIN deve essere di 4 cifre.'),
 });
 
 export default function CompanyLoginPage() {
@@ -25,8 +24,7 @@ export default function CompanyLoginPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      pin: '',
     },
   });
 
@@ -39,8 +37,18 @@ export default function CompanyLoginPage() {
         });
         return;
     }
+
+    if (values.pin !== '1929') {
+        toast({
+            variant: "destructive",
+            title: "Accesso Fallito",
+            description: "PIN non valido. Riprova.",
+        });
+        return;
+    }
+
     try {
-        await signInWithEmailAndPassword(auth, values.email, values.password);
+        await signInAnonymously(auth);
         toast({
             title: 'Accesso Riuscito',
             description: 'Reindirizzamento al portale aziendale...',
@@ -50,7 +58,7 @@ export default function CompanyLoginPage() {
         toast({
             variant: "destructive",
             title: "Accesso Fallito",
-            description: "Email o password non validi. Riprova.",
+            description: "Impossibile effettuare l'accesso. Riprova.",
         });
         console.error('Company Login Failed:', error);
     }
@@ -59,31 +67,18 @@ export default function CompanyLoginPage() {
   return (
     <AuthLayout
       title="Portale Azienda"
-      description="Accedi per gestire i check-in e valutare i talenti."
+      description="Inserisci il PIN per gestire i check-in e valutare i talenti."
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
-            name="email"
+            name="pin"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>PIN Azienda</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="hr@azienda.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="********" {...field} />
+                  <Input type="password" placeholder="****" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase';
 
 const formSchema = z.object({
-  pin: z.string().min(6, 'Il PIN Master deve contenere almeno 6 caratteri.'),
+  pin: z.string().length(4, 'Il PIN deve essere di 4 cifre.'),
 });
 
 export default function TeacherLoginPage() {
@@ -33,6 +33,14 @@ export default function TeacherLoginPage() {
         toast({
             variant: "destructive",
             title: "Servizio di autenticazione non pronto",
+        });
+        return;
+    }
+    if (values.pin !== '1929') {
+        toast({
+            variant: "destructive",
+            title: "Accesso Fallito",
+            description: "PIN non valido. Riprova.",
         });
         return;
     }
@@ -69,7 +77,7 @@ export default function TeacherLoginPage() {
               <FormItem>
                 <FormLabel>PIN Master</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="******" {...field} />
+                  <Input type="password" placeholder="****" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

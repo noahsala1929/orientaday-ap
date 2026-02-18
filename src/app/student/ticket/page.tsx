@@ -19,7 +19,7 @@ const bookings = [
 
 function QrCode({ studentId }: { studentId: string }) {
   const qrData = JSON.stringify({ studentId, app: 'OrientaDay' });
-  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=256x256&bgcolor=ecf3fa&color=3d2999&qzone=1`;
+  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=256x256&bgcolor=ffffff&color=e53e3e&qzone=1`;
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-inner">

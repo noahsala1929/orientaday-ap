@@ -11,25 +11,25 @@ import { Logo } from "@/components/logo";
 export default function HomePage() {
   const roles = [
     {
-      title: "For Students",
-      description: "Discover companies, book your sessions, and get your personalized QR ticket for the event.",
+      title: "Per Studenti",
+      description: "Scopri le aziende, prenota le tue sessioni e ottieni il tuo biglietto QR personalizzato per l'evento.",
       icon: <School className="w-8 h-8 text-primary" />,
       link: "/login/student",
-      cta: "Student Access",
+      cta: "Accesso Studente",
     },
     {
-      title: "For Teachers",
-      description: "Access your dashboard to manage student attendance and monitor event participation.",
+      title: "Per Insegnanti",
+      description: "Accedi alla tua dashboard per gestire le presenze degli studenti e monitorare la partecipazione all'evento.",
       icon: <UserCheck className="w-8 h-8 text-primary" />,
       link: "/login/teacher",
-      cta: "Teacher Dashboard",
+      cta: "Dashboard Insegnante",
     },
     {
-      title: "For Companies",
-      description: "Check-in students, assess talent, and manage your schedule. Optimized for tablets.",
+      title: "Per Aziende",
+      description: "Fai il check-in degli studenti, valuta i talenti e gestisci il tuo programma. Ottimizzato per tablet.",
       icon: <Building className="w-8 h-8 text-primary" />,
       link: "/login/company",
-      cta: "Company Portal",
+      cta: "Portale Azienda",
     },
   ];
 
@@ -47,15 +47,15 @@ export default function HomePage() {
 
       <div className="grid grid-cols-1 gap-6 mt-12 md:grid-cols-3 md:gap-8 w-full max-w-5xl">
         {roles.map((role) => (
-          <Card key={role.title} className="flex flex-col transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
-            <CardHeader className="items-center">
+          <Card key={role.title} className="flex flex-col transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl rounded-2xl">
+            <CardHeader className="items-center pt-8">
               <div className="p-4 bg-primary/10 rounded-full mb-4">
                 {role.icon}
               </div>
               <CardTitle className="font-headline">{role.title}</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col flex-grow text-center">
-              <CardDescription className="flex-grow">{role.description}</CardDescription>
+              <CardDescription className="flex-grow px-2">{role.description}</CardDescription>
               <Button asChild className="mt-6 w-full group">
                 <Link href={role.link}>
                   {role.cta}

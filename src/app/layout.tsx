@@ -1,7 +1,5 @@
 import type {Metadata} from 'next';
 import './globals.css';
-import { Toaster } from "@/components/ui/toaster";
-import { FirebaseClientProvider } from '@/firebase';
 import { SiteLockProvider } from '@/components/site-lock-provider';
 
 export const metadata: Metadata = {
@@ -22,12 +20,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased h-full">
-        <FirebaseClientProvider>
-          <SiteLockProvider>
-            {children}
-          </SiteLockProvider>
-        </FirebaseClientProvider>
-        <Toaster />
+        <SiteLockProvider>
+          {children}
+        </SiteLockProvider>
       </body>
     </html>
   );

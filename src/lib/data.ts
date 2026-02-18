@@ -4,6 +4,7 @@ import { PlaceHolderImages } from './placeholder-images';
 export interface School {
   id: string;
   name: string;
+  pin: string;
 }
 
 export interface Company {
@@ -35,10 +36,10 @@ export interface Booking {
 }
 
 export const schools: School[] = [
-  { id: 'aldini-valeriani', name: 'Istituto Aldini Valeriani' },
-  { id: 'belluzzi-fioravanti', name: 'IIS Belluzzi-Fioravanti' },
-  { id: 'crescenzi-pacinotti-sirani', name: 'IIS Crescenzi-Pacinotti-Sirani' },
-  { id: 'rosa-luxemburg', name: 'ITCS Rosa Luxemburg' },
+  { id: 'aldini-valeriani', name: 'Istituto Aldini Valeriani', pin: '1234' },
+  { id: 'belluzzi-fioravanti', name: 'IIS Belluzzi-Fioravanti', pin: '2345' },
+  { id: 'crescenzi-pacinotti-sirani', name: 'IIS Crescenzi-Pacinotti-Sirani', pin: '3456' },
+  { id: 'rosa-luxemburg', name: 'ITCS Rosa Luxemburg', pin: '4567' },
 ];
 
 export const companies: Company[] = [

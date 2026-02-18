@@ -26,10 +26,24 @@ export function UserNav({ name, email, role }: UserNavProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
-    if (auth) {
-        await auth.signOut();
+    if (role === 'Student') {
+      if (auth) {
+          await auth.signOut();
+      }
+      router.push('/');
+    } else if (role === 'Company HR') {
+      sessionStorage.removeItem('companyId');
+      router.push('/company/login');
+    } else if (role === 'Teacher') {
+      sessionStorage.removeItem('schoolId');
+      router.push('/teacher/login');
+    } else {
+      // Default logout for any other case
+      if (auth) {
+          await auth.signOut();
+      }
+      router.push('/');
     }
-    router.push('/');
   };
 
   return (
@@ -38,7 +52,7 @@ export function UserNav({ name, email, role }: UserNavProps) {
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
             <AvatarFallback className="bg-primary text-primary-foreground">
-              {name.split(' ').map(n => n[0]).join('')}
+              {name?.split(' ').map(n => n[0]).join('')}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -47,9 +61,7 @@ export function UserNav({ name, email, role }: UserNavProps) {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{name}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {email}
-            </p>
+            {email && <p className="text-xs leading-none text-muted-foreground">{email}</p>}
             <p className="text-xs leading-none text-muted-foreground pt-1 font-semibold uppercase">{role}</p>
           </div>
         </DropdownMenuLabel>

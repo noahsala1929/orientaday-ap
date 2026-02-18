@@ -49,13 +49,13 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!userLoading && user) {
-      router.push('/role-selection');
+      router.push('/student/dashboard');
     }
   }, [user, userLoading, router]);
 
   const handleSuccessfulLogin = (user: any) => {
-    toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla selezione del ruolo...' });
-    router.push('/role-selection');
+    toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla dashboard...' });
+    router.push('/student/dashboard');
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -130,7 +130,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthLayout title="Accedi" description="Accedi al tuo account OrientaDay">
+    <AuthLayout title="Accesso Studente" description="Accedi al tuo account OrientaDay">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField

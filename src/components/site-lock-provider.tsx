@@ -27,8 +27,12 @@ export function SiteLockProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <SiteLockContext.Provider value={{ isUnlocked, unlockSite }}>
-      <div style={{ display: isUnlocked ? 'block' : 'none' }} className="h-full">{children}</div>
-      {!isUnlocked && <SiteLockPage />}
+      {children}
+      {!isUnlocked && (
+        <div className="fixed inset-0 z-50 h-full w-full bg-background">
+          <SiteLockPage />
+        </div>
+      )}
     </SiteLockContext.Provider>
   );
 }

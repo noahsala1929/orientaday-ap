@@ -40,7 +40,6 @@ export function SiteLockPage() {
         description: "Stai per essere reindirizzato alla pagina di selezione ruolo.",
       });
       unlockSite();
-      router.replace('/');
     } else {
       toast({
         variant: "destructive",

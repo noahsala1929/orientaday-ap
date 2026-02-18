@@ -37,10 +37,10 @@ export function SiteLockPage() {
     if (values.pin === ADMIN_PIN) {
       toast({
         title: 'Accesso Confermato',
-        description: 'Benvenuto! Verrai reindirizzato alla pagina di accesso.',
+        description: 'Benvenuto! Verrai reindirizzato alla pagina principale.',
       });
       unlockSite();
-      router.push('/login');
+      router.push('/');
     } else {
       toast({
         variant: "destructive",

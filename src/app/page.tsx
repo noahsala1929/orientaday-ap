@@ -17,11 +17,11 @@ export default function HomePage() {
         </h1>
         <p className="max-w-2xl mt-4 text-lg text-muted-foreground">
           La piattaforma per connettere studenti, scuole e aziende.
-          Accedi per scoprire le opportunità e gestire la tua giornata.
+          Entra per scoprire le opportunità e gestire la tua giornata.
         </p>
          <Button asChild className="mt-10 group" size="lg">
-            <Link href="/login">
-              Accedi
+            <Link href="/role-selection">
+              Entra nel portale
               <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>

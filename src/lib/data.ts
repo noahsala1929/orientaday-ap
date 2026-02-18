@@ -57,7 +57,7 @@ export const companies: Company[] = [
   { id: 'site-spa', name: 'Site Spa', description: 'Realizzazione e manutenzione di grandi infrastrutture tecnologiche per TLC ed energia.', logo: PlaceHolderImages[11], pin: '1313' },
   { id: 'alfasigma', name: 'Alfasigma', description: 'Principale azienda farmaceutica in Italia, con focus su aree gastrointestinale e vascolare.', logo: PlaceHolderImages[12], pin: '1414' },
   { id: 'basf', name: 'BASF', description: 'Il più grande produttore chimico al mondo con una vasta gamma di prodotti.', logo: PlaceHolderImages[13], pin: '1515' },
-  { id: 'gvs', name: 'GVS Filter Technology', description: 'Filtri e componenti per applicazioni nei settori medicale, laboratorio, automotive e sicurezza.', logo: PlaceHolderImages[14], pin: '1616' },
+  { id: 'gvs', name: 'GVS Filter Technology', description: 'Filtri e componenti per applicazioni nei settori medicale, laboratorio, automotive e sicurezza.', logo: PlaceHolderImages[15], pin: '1616' },
   { id: 'tetra-pak', name: 'Tetra Pak', description: 'Leader mondiale per le soluzioni di trattamento e confezionamento degli alimenti.', logo: PlaceHolderImages[15], pin: '1717' },
   { id: 'bonfiglioli', name: 'Bonfiglioli', description: 'Progetta e produce una gamma completa di motoriduttori, motori elettrici e inverter.', logo: PlaceHolderImages[16], pin: '1818' },
 ];
@@ -79,5 +79,20 @@ export const students: Student[] = [
   { id: 'student-8', name: 'Hannah Smith', schoolId: 'northwood', email: 'hannah.s@example.com', status: 'pending' },
 ];
 
-// Mock bookings: each student books one slot.
-export let bookings: Booking[] = [];
+// Mock bookings:
+export let bookings: Booking[] = [
+  // Slot 1: 09:00 - 09:40
+  { studentId: 'student-1', companyId: 'ducati', timeSlotId: 'slot-1' },
+  { studentId: 'student-3', companyId: 'ducati', timeSlotId: 'slot-1' },
+  { studentId: 'student-2', companyId: 'ferrari', timeSlotId: 'slot-1' },
+
+  // Slot 2: 09:50 - 10:30
+  { studentId: 'student-4', companyId: 'lamborghini', timeSlotId: 'slot-2' },
+  { studentId: 'student-5', companyId: 'ducati', timeSlotId: 'slot-2' },
+  { studentId: 'student-1', companyId: 'marchesini-group', timeSlotId: 'slot-2' },
+
+  // Slot 3: 10:40 - 11:20
+  { studentId: 'student-6', companyId: 'ferrari', timeSlotId: 'slot-3' },
+  { studentId: 'student-7', companyId: 'ferrari', timeSlotId: 'slot-3' },
+  { studentId: 'student-8', companyId: 'ima-group', timeSlotId: 'slot-3' },
+];

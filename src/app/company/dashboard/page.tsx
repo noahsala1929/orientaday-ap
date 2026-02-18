@@ -1,21 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { students, schools, type Student } from '@/lib/data';
+import { students, schools, companies, timeSlots, bookings, type Student } from '@/lib/data';
 import { StarRating } from '@/components/company/star-rating';
 import { useToast } from '@/hooks/use-toast';
-import { Save, UserPlus } from 'lucide-react';
+import { Save, UserPlus, MoreHorizontal, Pencil } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 
 interface AssessedStudent extends Student {
@@ -27,39 +35,32 @@ export default function CompanyDashboard() {
   const [selectedStudent, setSelectedStudent] = useState<AssessedStudent | null>(null);
   const [rating, setRating] = useState(0);
   const [notes, setNotes] = useState('');
+  const [companyId, setCompanyId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleStudentSelect = (studentId: string) => {
-    if (!studentId) {
-        setSelectedStudent(null);
-        return;
-    }
-    const studentData = students.find(s => s.id === studentId);
-    if (studentData) {
-      // Reset fields for new student
-      setRating(0);
-      setNotes('');
-      setSelectedStudent({ ...studentData, rating: 0, notes: '' });
-      toast({
-        title: 'Studente Selezionato',
-        description: `${studentData.name} è pronto per la valutazione.`,
-      });
-    } else {
-        setSelectedStudent(null);
-        toast({
-            variant: 'destructive',
-            title: 'Errore',
-            description: 'Studente non trovato nel sistema.',
-        });
-    }
+  useEffect(() => {
+    const storedCompanyId = sessionStorage.getItem('companyId');
+    setCompanyId(storedCompanyId);
+  }, []);
+
+  const handleSelectStudentForAssessment = (student: Student) => {
+    // Reset fields for new student
+    setRating(0);
+    setNotes('');
+    setSelectedStudent({ ...student, rating: 0, notes: '' });
+    toast({
+      title: 'Studente Selezionato',
+      description: `${student.name} è pronto per la valutazione.`,
+    });
   };
 
   const handleSaveAssessment = () => {
     if (!selectedStudent) return;
     
     // Here you would save the data to your backend (e.g., Firestore)
-    console.log({
+    console.log('SAVING ASSESSMENT:', {
       studentId: selectedStudent.id,
+      companyId: companyId,
       rating,
       notes,
     });
@@ -69,7 +70,7 @@ export default function CompanyDashboard() {
       description: `Note e valutazione per ${selectedStudent.name} sono state salvate.`,
     });
     
-    // Clear selection for next scan
+    // Clear selection
     setSelectedStudent(null);
   };
   
@@ -77,30 +78,84 @@ export default function CompanyDashboard() {
     return schools.find(s => s.id === schoolId)?.name || 'Scuola Sconosciuta';
   }
 
+  const getBookedStudentsForSlot = (slotId: string) => {
+    if (!companyId) return [];
+    
+    return bookings
+      .filter(b => b.companyId === companyId && b.timeSlotId === slotId)
+      .map(booking => {
+        return students.find(s => s.id === booking.studentId);
+      })
+      .filter((student): student is Student => student !== undefined);
+  };
+
+  const companyName = companies.find(c => c.id === companyId)?.name || 'Azienda';
+
   return (
     <div className="container mx-auto py-8 px-4 h-full">
+      <h1 className="text-3xl font-bold font-headline tracking-tight mb-2">Dashboard di {companyName}</h1>
+      <p className="text-muted-foreground mb-8">Visualizza gli studenti prenotati e valuta i talenti.</p>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
         <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle className="font-headline text-2xl">Selezione Studente</CardTitle>
-            <CardDescription>Seleziona uno studente dalla lista per iniziare la valutazione.</CardDescription>
+            <CardTitle className="font-headline text-2xl">Studenti Prenotati</CardTitle>
+            <CardDescription>Visualizza gli studenti iscritti per ogni fascia oraria.</CardDescription>
           </CardHeader>
-          <CardContent className="flex-grow flex items-center justify-center">
-            <div className="w-full max-w-sm space-y-4">
-                <Select onValueChange={handleStudentSelect} value={selectedStudent?.id || ''}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Seleziona uno studente..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {students.map((student) => (
-                            <SelectItem key={student.id} value={student.id}>
-                                {student.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                <p className="text-xs text-center text-muted-foreground">(La selezione manuale sostituisce la scansione QR per questa demo)</p>
-            </div>
+          <CardContent className="flex-grow">
+            <Tabs defaultValue={timeSlots[0].id} className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                {timeSlots.map(slot => (
+                  <TabsTrigger key={slot.id} value={slot.id}>{slot.label}</TabsTrigger>
+                ))}
+              </TabsList>
+              {timeSlots.map(slot => {
+                const bookedStudents = getBookedStudentsForSlot(slot.id);
+                return (
+                  <TabsContent key={slot.id} value={slot.id} className="mt-4">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Nome Studente</TableHead>
+                          <TableHead className="text-right">Azioni</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {bookedStudents.length > 0 ? (
+                          bookedStudents.map(student => (
+                            <TableRow key={student.id}>
+                              <TableCell className="font-medium">{student.name}</TableCell>
+                              <TableCell className="text-right">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                      <span className="sr-only">Apri menu</span>
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => handleSelectStudentForAssessment(student)}>
+                                      <Pencil className="mr-2 h-4 w-4" />
+                                      Valuta Talento
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={2} className="h-24 text-center">
+                              Nessuno studente prenotato per questa fascia oraria.
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TabsContent>
+                );
+              })}
+            </Tabs>
           </CardContent>
         </Card>
 
@@ -108,7 +163,7 @@ export default function CompanyDashboard() {
           <CardHeader>
             <CardTitle className="font-headline text-2xl">Valutazione Talento</CardTitle>
             <CardDescription>
-              {selectedStudent ? `In valutazione: ${selectedStudent.name}` : 'Seleziona uno studente per iniziare.'}
+              {selectedStudent ? `In valutazione: ${selectedStudent.name}` : 'Seleziona uno studente dalla lista per iniziare.'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -150,7 +205,7 @@ export default function CompanyDashboard() {
               <div className="flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-lg h-full bg-background">
                 <UserPlus className="h-12 w-12 text-muted-foreground mb-4" />
                 <p className="font-semibold">Nessuno Studente Selezionato</p>
-                <p className="text-sm text-muted-foreground">Seleziona uno studente dalla lista per caricare qui il suo profilo.</p>
+                <p className="text-sm text-muted-foreground">Seleziona "Valuta Talento" dalla lista a sinistra per iniziare.</p>
               </div>
             )}
           </CardContent>

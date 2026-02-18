@@ -1,7 +1,7 @@
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <div className="flex flex-1 flex-col items-center justify-start p-6 pt-24 sm:pt-32">
+      <div className="flex flex-1 flex-col items-center justify-start p-6 pt-12 sm:pt-16">
         <div className="flex max-w-2xl flex-col items-center gap-y-8 text-center">
           <div className="space-y-4">
             <h1 className="text-5xl font-bold tracking-tight text-foreground sm:text-6xl">

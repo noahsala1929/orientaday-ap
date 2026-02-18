@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { companies, timeSlots, bookings } from '@/lib/data';
-import { CheckCircle, Users, ArrowRight, Ticket } from 'lucide-react';
+import { CheckCircle, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function StudentDashboard() {
@@ -53,11 +53,6 @@ export default function StudentDashboard() {
             <h1 className="text-3xl font-bold font-headline tracking-tight">Sessioni Aziendali</h1>
             <p className="text-muted-foreground mt-1">Sfoglia e prenota sessioni con le aziende.</p>
         </div>
-        <Button onClick={() => router.push('/student/ticket')} className="mt-4 md:mt-0 group">
-            <Ticket className="mr-2 h-4 w-4"/>
-            Visualizza il Mio Biglietto
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </Button>
       </div>
 
       <Tabs defaultValue={timeSlots[0].id} className="w-full">

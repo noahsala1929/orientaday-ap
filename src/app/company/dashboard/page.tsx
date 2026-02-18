@@ -6,10 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { students, schools, type Student } from '@/lib/data';
-import { QrScannerMock } from '@/components/company/qr-scanner-mock';
 import { StarRating } from '@/components/company/star-rating';
 import { useToast } from '@/hooks/use-toast';
-import { Save, User, UserPlus } from 'lucide-react';
+import { Save, UserPlus } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 
 interface AssessedStudent extends Student {
   rating: number;
@@ -22,7 +29,11 @@ export default function CompanyDashboard() {
   const [notes, setNotes] = useState('');
   const { toast } = useToast();
 
-  const handleScanSuccess = (studentId: string) => {
+  const handleStudentSelect = (studentId: string) => {
+    if (!studentId) {
+        setSelectedStudent(null);
+        return;
+    }
     const studentData = students.find(s => s.id === studentId);
     if (studentData) {
       // Reset fields for new student
@@ -30,15 +41,16 @@ export default function CompanyDashboard() {
       setNotes('');
       setSelectedStudent({ ...studentData, rating: 0, notes: '' });
       toast({
-        title: 'Studente Trovato',
-        description: `${studentData.name} è pronto per il check-in.`,
+        title: 'Studente Selezionato',
+        description: `${studentData.name} è pronto per la valutazione.`,
       });
     } else {
-      toast({
-        variant: 'destructive',
-        title: 'Errore Scansione',
-        description: 'Studente non trovato nel sistema.',
-      });
+        setSelectedStudent(null);
+        toast({
+            variant: 'destructive',
+            title: 'Errore',
+            description: 'Studente non trovato nel sistema.',
+        });
     }
   };
 
@@ -70,11 +82,25 @@ export default function CompanyDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
         <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle className="font-headline text-2xl">Check-In Studenti</CardTitle>
-            <CardDescription>Usa lo scanner per fare il check-in degli studenti per la loro sessione.</CardDescription>
+            <CardTitle className="font-headline text-2xl">Selezione Studente</CardTitle>
+            <CardDescription>Seleziona uno studente dalla lista per iniziare la valutazione.</CardDescription>
           </CardHeader>
-          <CardContent className="flex-grow">
-            <QrScannerMock onScanSuccess={handleScanSuccess} />
+          <CardContent className="flex-grow flex items-center justify-center">
+            <div className="w-full max-w-sm space-y-4">
+                <Select onValueChange={handleStudentSelect} value={selectedStudent?.id || ''}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Seleziona uno studente..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {students.map((student) => (
+                            <SelectItem key={student.id} value={student.id}>
+                                {student.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <p className="text-xs text-center text-muted-foreground">(La selezione manuale sostituisce la scansione QR per questa demo)</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -82,7 +108,7 @@ export default function CompanyDashboard() {
           <CardHeader>
             <CardTitle className="font-headline text-2xl">Valutazione Talento</CardTitle>
             <CardDescription>
-              {selectedStudent ? `In valutazione: ${selectedStudent.name}` : 'Scansiona il biglietto di uno studente per iniziare.'}
+              {selectedStudent ? `In valutazione: ${selectedStudent.name}` : 'Seleziona uno studente per iniziare.'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -124,7 +150,7 @@ export default function CompanyDashboard() {
               <div className="flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-lg h-full bg-background">
                 <UserPlus className="h-12 w-12 text-muted-foreground mb-4" />
                 <p className="font-semibold">Nessuno Studente Selezionato</p>
-                <p className="text-sm text-muted-foreground">Scansiona il biglietto QR di uno studente per caricare qui il suo profilo.</p>
+                <p className="text-sm text-muted-foreground">Seleziona uno studente dalla lista per caricare qui il suo profilo.</p>
               </div>
             )}
           </CardContent>

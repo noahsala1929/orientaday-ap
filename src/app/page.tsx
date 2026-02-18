@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Building, School, UserCheck } from 'lucide-react';
 
@@ -9,11 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 
 export default function HomePage() {
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-      setIsClient(true)
-  }, []);
-
   const roles = [
     {
       title: "For Students",
@@ -72,7 +67,7 @@ export default function HomePage() {
         ))}
       </div>
       <footer className="py-8 mt-16 text-center text-muted-foreground text-sm">
-        {isClient ? <p>&copy; {new Date().getFullYear()} OrientaDay. All rights reserved.</p> : <p>&copy; OrientaDay. All rights reserved.</p> }
+        <p>&copy; 2024 OrientaDay. All rights reserved.</p>
       </footer>
     </main>
   );

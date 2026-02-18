@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Header } from "@/components/header";
 import { Loader2 } from 'lucide-react';
-import { schools } from '@/lib/data';
 
 export default function TeacherLayout({
   children,
@@ -12,22 +11,33 @@ export default function TeacherLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isTeacherAuth, setIsTeacherAuth] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
   const [schoolName, setSchoolName] = useState("Insegnante");
 
   useEffect(() => {
-    const schoolId = sessionStorage.getItem('schoolId');
-    if (schoolId) {
-        const school = schools.find(s => s.id === schoolId);
-        setSchoolName(school?.name || "Insegnante");
+    // Do not run auth check on the login page itself
+    if (pathname === '/teacher/login') {
+      setIsChecking(false);
+      return;
+    }
+
+    const storedSchoolName = sessionStorage.getItem('schoolName');
+    if (storedSchoolName) {
+        setSchoolName(storedSchoolName);
         setIsTeacherAuth(true);
     } else {
         router.replace('/teacher/login');
     }
     setIsChecking(false);
-  }, [router]);
+  }, [router, pathname]);
   
+  // If we are on the login page, just render the content without layout wrappers
+  if (pathname === '/teacher/login') {
+      return <>{children}</>;
+  }
+
   if (isChecking) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">

@@ -20,6 +20,8 @@ const formSchema = z.object({
   pin: z.string().length(4, "Il PIN deve essere di 4 cifre."),
 });
 
+const COMPANY_PIN = "1929";
+
 export default function CompanyLoginPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -35,7 +37,7 @@ export default function CompanyLoginPage() {
     
     const company = companies.find(c => c.id === values.companyId);
 
-    if (company && company.pin === values.pin) {
+    if (company && values.pin === COMPANY_PIN) {
       sessionStorage.setItem('companyId', company.id);
       toast({
         title: 'Accesso Riuscito',

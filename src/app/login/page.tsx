@@ -65,8 +65,9 @@ export default function LoginPage() {
       if (error.code === 'auth/unauthorized-domain') {
         toast({
           variant: "destructive",
-          title: "Dominio Non Autorizzato",
-          description: "Aggiungi 'localhost' ai domini autorizzati nelle impostazioni di Firebase Authentication per lo sviluppo locale.",
+          title: "Errore di Configurazione Firebase",
+          description: "Il progetto Firebase nel codice non corrisponde a quello configurato. Controlla `src/firebase/config.ts` e assicurati che il `projectId` sia corretto.",
+          duration: 10000,
         });
       } else {
         toast({
@@ -92,8 +93,9 @@ export default function LoginPage() {
        if (error.code === 'auth/unauthorized-domain') {
         toast({
           variant: "destructive",
-          title: "Dominio Non Autorizzato",
-          description: "Aggiungi 'localhost' ai domini autorizzati nelle impostazioni di Firebase Authentication per lo sviluppo locale.",
+          title: "Errore di Configurazione Firebase",
+          description: "Il progetto Firebase nel codice non corrisponde a quello configurato. Controlla `src/firebase/config.ts` e assicurati che il `projectId` sia corretto.",
+          duration: 10000,
         });
       } else if (error.code === 'auth/popup-closed-by-user') {
         toast({

@@ -1,3 +1,5 @@
+'use client';
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,8 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User } from "lucide-react";
-import Link from "next/link";
+import { useAuth } from "@/firebase";
+import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 
 interface UserNavProps {
   name: string;
@@ -18,6 +22,16 @@ interface UserNavProps {
 }
 
 export function UserNav({ name, email, role }: UserNavProps) {
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    if (auth) {
+        await auth.signOut();
+    }
+    router.push('/');
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,11 +54,9 @@ export function UserNav({ name, email, role }: UserNavProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/">
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
-          </Link>
+        <DropdownMenuItem onClick={handleLogout}>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

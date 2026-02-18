@@ -4,12 +4,14 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { AuthLayout } from '@/components/auth-layout';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/firebase';
 
 const formSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),
@@ -19,6 +21,7 @@ const formSchema = z.object({
 export default function CompanyLoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const auth = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,13 +30,30 @@ export default function CompanyLoginPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values); // In a real app, you'd use Firebase Auth
-    toast({
-      title: 'Login Successful',
-      description: 'Redirecting to the company portal...',
-    });
-    router.push('/company/dashboard');
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!auth) {
+        toast({
+            variant: "destructive",
+            title: "Authentication service not ready",
+            description: "Please try again in a moment.",
+        });
+        return;
+    }
+    try {
+        await signInWithEmailAndPassword(auth, values.email, values.password);
+        toast({
+            title: 'Login Successful',
+            description: 'Redirecting to the company portal...',
+        });
+        router.push('/company/dashboard');
+    } catch (error: any) {
+        toast({
+            variant: "destructive",
+            title: "Login Failed",
+            description: "Invalid email or password. Please try again.",
+        });
+        console.error('Company Login Failed:', error);
+    }
   }
 
   return (
@@ -69,8 +89,8 @@ export default function CompanyLoginPage() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Sign In
+          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
           </Button>
         </form>
       </Form>

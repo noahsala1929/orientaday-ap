@@ -23,3 +23,4 @@ export {
   useFirestore,
   useAuth,
 } from './provider';
+export { useUser } from './auth/use-user';

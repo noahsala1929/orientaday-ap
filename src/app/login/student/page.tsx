@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { signInAnonymously } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -12,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { schools } from '@/lib/data';
 import { AuthLayout } from '@/components/auth-layout';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/firebase';
 
 const formSchema = z.object({
   schoolId: z.string().min(1, 'Please select your school.'),
@@ -21,6 +23,7 @@ const formSchema = z.object({
 export default function StudentLoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const auth = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,14 +32,33 @@ export default function StudentLoginPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values); // In a real app, you'd verify the PIN
-    toast({
-      title: 'Login Successful',
-      description: 'Redirecting to your dashboard...',
-    });
-    // Simulate successful login and redirect
-    router.push('/student/dashboard');
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!auth) {
+        toast({
+            variant: "destructive",
+            title: "Authentication service not ready",
+        });
+        return;
+    }
+    try {
+        // This is a mock login. In a real app, you'd verify the PIN against a backend service
+        // and get a custom token to sign in. For this demo, we sign in anonymously.
+        await signInAnonymously(auth);
+
+        toast({
+          title: 'Login Successful',
+          description: 'Redirecting to your dashboard...',
+        });
+        // Simulate successful login and redirect
+        router.push('/student/dashboard');
+    } catch (error: any) {
+        toast({
+            variant: "destructive",
+            title: "Login Failed",
+            description: "Could not log you in. Please try again.",
+        });
+        console.error("Student Login Failed:", error);
+    }
   }
 
   return (
@@ -83,8 +105,8 @@ export default function StudentLoginPage() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Access Dashboard
+          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Accessing...' : 'Access Dashboard'}
           </Button>
         </form>
       </Form>

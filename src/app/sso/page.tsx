@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { signInWithCustomToken } from 'firebase/auth';
+import { signInWithCustomToken, updateProfile } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { createCustomToken } from './actions';
 import { Loader2 } from 'lucide-react';
@@ -20,8 +20,14 @@ function SSOProcessor() {
     if (token && auth) {
       const performSignIn = async () => {
         try {
-          const customToken = await createCustomToken(token);
-          await signInWithCustomToken(auth, customToken);
+          const { customToken, displayName } = await createCustomToken(token);
+          const userCredential = await signInWithCustomToken(auth, customToken);
+          
+          if (userCredential.user && displayName) {
+            await updateProfile(userCredential.user, {
+                displayName: displayName,
+            });
+          }
           
           toast({
             title: 'Login Successful',

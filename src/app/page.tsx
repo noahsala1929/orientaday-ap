@@ -41,7 +41,7 @@ export default function HomePage() {
           Scopri istituzioni scolastiche e aziende d'eccellenza del tessuto bolognese
         </h1>
         <p className="max-w-2xl mt-4 text-lg text-muted-foreground">
-          OrientaDay seamlessly connects students with their future careers. Choose your role to begin.
+          Scegli il tuo ruolo per cominciare.
         </p>
       </div>
 

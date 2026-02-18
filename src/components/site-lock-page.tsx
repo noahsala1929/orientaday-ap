@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,6 +23,7 @@ const formSchema = z.object({
 export function SiteLockPage() {
   const { unlockSite } = useSiteLock();
   const { toast } = useToast();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -31,23 +33,23 @@ export function SiteLockPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    setTimeout(() => {
-      if (values.pin === ADMIN_PIN) {
-        toast({
-          title: 'Accesso Confermato',
-          description: 'Benvenuto.',
-        });
-        unlockSite();
-      } else {
-        toast({
-          variant: "destructive",
-          title: "PIN Errato",
-          description: "Il PIN inserito non è corretto. Riprova.",
-        });
-        form.reset();
-      }
+
+    if (values.pin === ADMIN_PIN) {
+      toast({
+        title: 'Accesso Confermato',
+        description: 'Benvenuto! Verrai reindirizzato alla pagina di accesso.',
+      });
+      unlockSite();
+      router.push('/login');
+    } else {
+      toast({
+        variant: "destructive",
+        title: "PIN Errato",
+        description: "Il PIN inserito non è corretto. Riprova.",
+      });
+      form.reset();
       setIsLoading(false);
-    }, 500);
+    }
   }
 
   return (

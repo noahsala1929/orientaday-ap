@@ -34,9 +34,7 @@ export function SiteLockProvider({ children }: { children: React.ReactNode }) {
     date.setTime(date.getTime() + (24 * 60 * 60 * 1000)); // 1 day
     const expires = "expires=" + date.toUTCString();
     document.cookie = "site_unlocked=true;" + expires + ";path=/";
-    // Forcing a reload is more robust in production environments
-    // to ensure the cookie is read correctly on the next page load.
-    window.location.reload();
+    setIsUnlocked(true);
   };
   
   if (!isClient) {

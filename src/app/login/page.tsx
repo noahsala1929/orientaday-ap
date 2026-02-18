@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { Mail, Lock, Loader2 } from 'lucide-react';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInAnonymously } from 'firebase/auth';
+import { Mail, Lock, Loader2, Ghost } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -37,17 +37,13 @@ export default function LoginPage() {
   const { user, loading: userLoading } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
 
   useEffect(() => {
     if (!userLoading && user) {
       router.push('/role-selection');
     }
   }, [user, userLoading, router]);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: { email: '', password: '' },
-  });
 
   const handleSuccessfulLogin = (user: any) => {
     toast({ title: 'Accesso Riuscito', description: 'Reindirizzamento alla selezione del ruolo...' });
@@ -65,7 +61,7 @@ export default function LoginPage() {
       toast({
         variant: "destructive",
         title: "Accesso Fallito",
-        description: "Email o password non corretti, oppure il dominio non è autorizzato su Firebase. Riprova.",
+        description: "Email o password non corretti. Riprova.",
       });
     } finally {
       setIsLoading(false);
@@ -91,11 +87,29 @@ export default function LoginPage() {
         toast({
           variant: "destructive",
           title: "Accesso Google Fallito",
-          description: "Impossibile accedere con Google. Potrebbe essere un problema di dominio non autorizzato su Firebase.",
+          description: "Impossibile accedere con Google. Riprova più tardi.",
         });
       }
     } finally {
       setIsGoogleLoading(false);
+    }
+  }
+
+  async function handleGuestSignIn() {
+    if (!auth) return;
+    setIsGuestLoading(true);
+    try {
+      const userCredential = await signInAnonymously(auth);
+      handleSuccessfulLogin(userCredential.user);
+    } catch (error: any) {
+      console.error('Guest Sign In Failed:', error);
+      toast({
+        variant: "destructive",
+        title: "Accesso Ospite Fallito",
+        description: "Impossibile accedere come ospite. Riprova più tardi.",
+      });
+    } finally {
+      setIsGuestLoading(false);
     }
   }
   
@@ -146,7 +160,7 @@ export default function LoginPage() {
               <span className="text-sm text-muted-foreground hover:text-primary cursor-pointer">Password dimenticata?</span>
             </Link>
           </div>
-          <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+          <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading || isGuestLoading}>
             {isLoading ? 'Accesso in corso...' : 'Accedi'}
           </Button>
         </form>
@@ -159,8 +173,11 @@ export default function LoginPage() {
             <span className="bg-card px-2 text-muted-foreground">Oppure continua con</span>
         </div>
       </div>
-      <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
+      <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading || isGuestLoading}>
         {isGoogleLoading ? <span className="animate-pulse">Verifica...</span> : <><GoogleIcon className="mr-2 h-5 w-5" /> Accedi con Google</>}
+      </Button>
+      <Button variant="secondary" className="w-full mt-4" onClick={handleGuestSignIn} disabled={isLoading || isGoogleLoading || isGuestLoading}>
+        {isGuestLoading ? <span className="animate-pulse">Accesso in corso...</span> : <><Ghost className="mr-2 h-5 w-5" /> Accedi come Ospite</>}
       </Button>
     </AuthLayout>
   );
